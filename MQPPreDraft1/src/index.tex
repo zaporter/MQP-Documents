@@ -1,0 +1,110 @@
+\maketitle
+
+\section{Problem Statement}
+
+Many software applications are build on the assumption that code, once compiled, is static and non-modifiable. I think it is possible to build binary wrappers that modify executables (at run time) to allow for easy program modification of non-exposed program functionality.   
+
+\section{Software that already exists to deal with this topic}
+
+\begin{itemize}
+\item \href{https://frida.re/docs/home/}{frida} (Any): Allows for arbitrary injection of compiled javascript with QuickJS into a currently running process. This mainly works on the function level and allows for injection of code on arbitrary function entry and exit (of dynamically linked libraries). This is a super cool tool and something I might work heavily with. 
+\item \href{https://github.com/rentzsch/mach_inject}{mach inject} (macOS) : Allows copying over code into another processes address space and spawning threads to run that code.
+\item \href{https://dynamorio.org/page_home.html}{DynamoRIO} (any) : Similar to Frida. "Allows arbitrary modifications to application instructions via a powerful IA-32/AMD64/ARM/AArch64 instruction manipulation library. DynamoRIO provides efficient, transparent, and comprehensive manipulation of unmodified applications running on stock operating systems." 
+\item \href{https://github.com/secretsquirrel/the-backdoor-factory}{The backdoor factory} (any) : Allows patching of executables to run shell code and then revert the binary to its original state. 
+    \item \href{https://en.wikipedia.org/wiki/Cheat_Engine}{Cheat Engine} (Windows + macOS) : This tool is a memory scanner / debugger. Its primary functionality comes through repeatedly pausing an application and then performing memory scans to identify addresses that satisfy certain criteria. This allows the user to isolate and identify addresses in memory that contain values they are interested in (such as in-game health, etc). It also allows for code injection and game-focused / DirectX hacks. 
+\item \href{https://github.com/scanmem/scanmem}{scanmem} (Linux) : This tool is very similar to Cheat Engine however it lacks other game-focused features and primarily focuses on memory address isolation. 
+\item \href{https://rada.re/n/radare2.html}{radare2} : Advanced decompiler with many features built in like disassembly and code-flow graph generation. 
+\item \href{https://ghidra-sre.org/}{ghidra} : Advanced code analysis tool to compete with IDA Pro. 
+\item \href{https://rr-project.org/}{RR} : Record and replay software which allows for the recording and then replaying of a programs execution. This works via capturing all non-deterministic factors of a program's execution and then using those for the replay. "rr records a group of Linux user-space processes and captures all inputs to those processes from the kernel, plus any nondeterministic CPU effects performed by those processes (of which there are very few). rr replay guarantees that execution preserves instruction-level control flow and memory and register contents. The memory layout is always the same, the addresses of objects don't change, register values are identical, syscalls return the same data, etc. " This is a super cool tool and something that I might work heavily with.  
+
+\end{itemize}
+
+
+Etc. There are more tools out there but these are the main ones. I will add to this list as I find more tools that I find interesting. 
+
+\section{What these tools don't solve}
+
+These tools are great for information collection / reverse engineering and even basic editing of binaries however they fail to make binary editing feasible to anyone but those who have a deep understanding of what is most likely happening on these processes. Non-simple program modifications with tools like Cheat Engine are incredibly difficult and are often done in tandem with tools like gdb and ghidra (I have watched a few advanced tutorials on the software). 
+
+\section{Minimum Definition of Success}
+Proof of concept that accomplishes:
+\begin{enumerate}
+    \item Ability to record execution of programs
+    \item Ability to determine relevant addresses and instructions for a certain time period
+    \item Ability to compare multiple code flow graphs and create a combined one that shows where the different graphs differ. This would be used to determine addresses where a change of state can result in a change of program flow.
+\end{enumerate}
+
+This does not include code insertion or modification however that is just because I want to set the bar low before I dive into the subject over the summer. 
+
+
+\section{Maximum Reasonable Definition of Success}
+Proof of concept that accomplishes:
+\begin{itemize}
+    \item Seeing all instructions that modify an address throughout the execution of a program (or in a smaller section of time)
+    \item Ability to insert compiled javascript via frida during execution / ability to modify instructions if frida doesn't pan out. 
+    \item Ability to see all code that was run during a certain time interval
+    \item Ability to pop open a GDB shell or open Ghidra to the current location at any time during the debugging process
+    \item Ability to either create a layer over an executable to insert new instructions or modify memory addresses at runtime (when no longer debugging). 
+    \item Ability to show a version of a code-flow graph (Not exactly a code flow graph as that isn't terribly interesting for most people, but rather a graph that shows all of the variables used in a code segment and their relationships to a segment of code)
+    \item Ability to compare two separate executions of a section of code and see where they differ (i.e. see where jump instructions are executed and show different code flow graphs). 
+    \item Ability to select hone in on certain processes
+    \item Ability to do this with programs that use X11 (this might be very hard. Not something I am going to tackle for a while). 
+\end{itemize}
+
+\section{Use Cases}
+\begin{itemize}
+    \item Changing non-configurable default settings of a binary (like default font in MS-Word)
+    \item Adding/removing key bindings to a non-configurable binary (Macros have proven to be useful. This would be super-macros.)
+    \item Instrumentation of binaries in complex manners (write to a file on: phone-home messages, GUI draw events, etc. (I obsessively publish almost all of my data to a MongoDB cluster. This would allow me to do that with closed source apps.))
+    \item Understanding what causes a program to crash / comparing execution states (reverse engineering). 
+    \item Removing outdated hardware-based limitations (For retro-video game modding)
+    \item Changing constants that affect program flow in a way a user doesn't desire (Error popus, music playing, etc.)
+    \item ... this will change \textit{significantly} as the project develops
+\end{itemize}
+
+
+
+\section{Biggest concerns / possible challenges}
+
+Perspirative challenge: one that can be overcome with the application of time and energy (perspiration). 
+
+\noindent Inspirational challenge: one that can be overcome with the application of careful thought and research
+
+\begin{itemize}
+    \item JIT / Dynamic linking (Inspirational): Anything that modifies executable code at runtime worries me.
+    \item Xorg / anything that uses Unix domain sockets (Inspirational): I don't know how to playback these events or understand them in a temporal sense. This might not be a big worry but it is something I've spent a lot of time thinking about. 
+    \item Code insertion (Perspirative): I really don't want to underestimate this part of the project. 
+    \item UI (Mix): UI's are not my area of expertise. I can write simple things but this is something that may take more time than I expect. (Depending on what path is chosen for the UI)
+\end{itemize}
+
+\section{Timeline}
+I plan on doing a great deal of research and solving some of the inspirational problems during Spring and Summer 2022. This includes activities like reading papers, studying tools like rr and frida, creating proof of concepts that can record xlib, etc. 
+I plan on truly starting in the beginning of A term 2022 and finishing either at the end of A or B term 2022. I have finished my classes for my major but haven't done my MQP so at this point I'm leaning towards just calling it B term but I need to plan things out more. 
+
+\section{Required Research}
+(in order of priority)
+\begin{enumerate}
+    \item Deep dive on recording software and inexpensive interrupts
+    \item Fairly deep dive on function inlining and functions that are the same across compilation unit boundaries (weak references / ODR violations). I am also curious about LTO (link time optimzation) and how that changes the produced binary
+    \item Deep dive on concolic programming / SAT solving. I understand the basics but now I need to understand more than that. I also not very familiar with the tools in the space. 
+    \item Deep dive on dynamic linking (Good lectures \href{https://www.youtube.com/watch?v=dOfucXtyEsU}{1}  \href{https://www.youtube.com/watch?v=8nyq8SNUTSc}{2}) (This will play a large role in program understanding and I need to really understand how it works at a low level.)
+    \item Shared memory and unix domain sockets with regards to Xorg (Ability to record xorg will have a large on final product so I need to start that early.)
+    \item Additional research on Frida and possibly LiveRecorder
+    \item Code flow graph generation techniques (If a tool that is suitable for this exists I would rather use that).
+    \item JIT compilation (for now I will stay far clear of anything with a non-static set of instructions)
+
+\end{enumerate}
+
+
+\section{Target Platform}
+Linux with kernel 5.15+ running on x86 via a user who \textit{could} run as root if needed. This isn't really something I am interested in changing at the moment. This is the hardware I run and want to develop on for the time being. 
+
+\section{MQP Advisor / Co-Advisor}
+Right now, I really don't know how MQP advisors work. Right now I am envisioning ~30 minutes every week or every odd week of meeting + a few occasional emails. Mostly I am looking for your brilliance and wisdom that you have accumulated in order to help me know what paths I should explore.
+
+
+\section{Team}
+I am currently in talks with a friend of mine, Ted Clifford to join this MQP. He has worked for Mitre for two summers and is well versed in security and is passionate about this layer of the stack. However he is employed by Mitre at the moment and isn't sure if he would rather just do an MQP with Mitre.
+
+I am still reaching out to people who might be interested. If you meet anyone, please send them my way. 
+\end{document}
