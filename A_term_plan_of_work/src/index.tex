@@ -1,5 +1,8 @@
 \maketitle
 
+Todo:
+SSA phi function join in the flow graph
+
 \section{Problem Statement}
 
 It is currently difficult to identify the flow of "program-level"/macro logic from static or even dynamic analysis. 
@@ -14,9 +17,10 @@ I hope to use record and replay technology to allow researchers to move easily p
     \item Code capable of tracing data through a program's execution 
     \item A plan for comparing the traces and identifying shared points between traces
     \item A platform for my UI that I am comfortable with
-    \item Recording infastructure to support scrobbling along the timeline of a program
+    \item Recording infastructure to support scrubbing along the timeline of a program
     \item Tests for all code I have written (within reason)
     \item Documentation for all code that reasonably requires documentation 
+    \item An example use case to demonstrate value
 \end{itemize}
 
 \section{Minimum Definition of Success}
@@ -36,6 +40,7 @@ Proof of concept that accomplishes:
     \item Ability to pop open a GDB shell or open Ghidra to the current location at any time during the debugging process
     \item Ability to either create a layer over an executable to insert new instructions or modify memory addresses at runtime (when no longer debugging). 
     \item Ability to show a version of a code-flow graph (Not exactly a code flow graph as that isn't terribly interesting for most people, but rather a graph that shows all of the variables used in a code segment and their relationships to a segment of code)
+    \item Fuzzing support
     \item Ability to compare two separate executions of a section of code and see where they differ (i.e. see where jump instructions are executed and show different code flow graphs). 
     \item Ability to select hone in on certain processes
     \item Ability to do this with programs that use X11 (this might be very hard. Not something I am going to tackle for a while). 
