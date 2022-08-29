@@ -1,8 +1,5 @@
 \maketitle
 
-Todo:
-SSA phi function join in the flow graph
-
 \section{Problem Statement}
 
 It is currently difficult to identify the flow of "program-level"/macro logic from static or even dynamic analysis. 
@@ -46,16 +43,16 @@ Proof of concept that accomplishes:
     \item Ability to do this with programs that use X11 (this might be very hard. Not something I am going to tackle for a while). 
 \end{itemize}
 
-\section{Use Cases}
-\begin{itemize}
-    \item Changing non-configurable default settings of a binary (like default font in MS-Word)
-    \item Adding/removing key bindings to a non-configurable binary (Macros have proven to be useful. This would be super-macros.)
-    \item Instrumentation of binaries in complex manners (write to a file on: phone-home messages, GUI draw events, etc. (I obsessively publish almost all of my data to a MongoDB cluster. This would allow me to do that with closed source apps.))
-    \item Understanding what causes a program to crash / comparing execution states (reverse engineering). 
-    \item Removing outdated hardware-based limitations (For retro-video game modding)
-    \item Changing constants that affect program flow in a way a user doesn't desire (Error popus, music playing, etc.)
-    \item ... this will change \textit{significantly} as the project develops
-\end{itemize}
+% \section{Use Cases}
+% \begin{itemize}
+%     \item Changing non-configurable default settings of a binary (like default font in MS-Word)
+%     \item Adding/removing key bindings to a non-configurable binary (Macros have proven to be useful. This would be super-macros.)
+%     \item Instrumentation of binaries in complex manners (write to a file on: phone-home messages, GUI draw events, etc. (I obsessively publish almost all of my data to a MongoDB cluster. This would allow me to do that with closed source apps.))
+%     \item Understanding what causes a program to crash / comparing execution states (reverse engineering). 
+%     \item Removing outdated hardware-based limitations (For retro-video game modding)
+%     \item Changing constants that affect program flow in a way a user doesn't desire (Error popus, music playing, etc.)
+%     \item ... this will change \textit{significantly} as the project develops
+% \end{itemize}
 
 
 
