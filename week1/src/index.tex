@@ -1,0 +1,89 @@
+\maketitle
+
+\section{Todos}
+\begin{itemize}
+    \item Understand checkpoint system for rr 
+    \item Demo of librr\_rs 
+    \item Begin thinking about similartity metrics
+    \item Outline usecase
+\end{itemize}
+
+
+\section{Checkpoint system for rr}
+
+\section{Project Assumptions}
+\begin{itemize}
+    \item W\^X circumvented with mprotect will guanratee that code section changes will not happen without an associated syscall. 
+        \subitem I am not sure if this applies with double mapped pages. 
+    \item The frontend is a good proxy for what is running in the background. In other words, visual updates are given to the user quickly after code runs in the background (quickly is subjective but probably less than 1s) 
+    \item It is not feasible to store every instruction (or even close to it). As such, it must be sufficient to scan and build paths intelligently
+\end{itemize}
+\section{Use cases / Scenario}
+\subsection{Date Gated Function}
+\subsubsection{Description}
+Functionality of a program only exists when f(current\_time)==true. 
+
+Examples of this may include malware or programs that have timing bugs. 
+
+Use case would be to identify the check and either understand or manipulate it. 
+
+
+\subsubsection{Required Functionality}
+\begin{enumerate}
+    \item Replay the binary 
+    \item Figure out screen recordings.. xlib terrifies me
+    \item Trace back where the instruction for manipulating the instruction is stored
+
+\end{enumerate}
+
+
+\subsection{Identify code injection opportunities}
+Record instances where 
+
+
+\section{Data Structures}
+\begin{quotation}
+    struct RanInstruction{
+        address: usize,
+        frametime: u32, // W\^X Assumption,
+        inputs: Vec<DataValue>,
+        instruction: DataValue<Instruction>, // todo. 
+    }
+
+    enum DataPathNode{
+        SYSCALL(name: String), // todo
+        FILE(name:String, offset:usize),
+        RAN\_INSTRUCTION(v: RanInstruction),
+        UNEXPANDED,
+    }
+    enum DataValue<T> {
+        value: T, 
+        source: DataPathNode,
+    }
+
+    enum Trace{
+        BLACKBOX(
+            inputs:??
+            size:usize, // Number of instructions?
+            start: usize,
+            end: usize,
+            subtraces:Vec<Trace>,
+        ),
+        EXPANDED(
+
+        )
+        LOOP(
+        )
+        BRANCH(
+
+        )
+        UNEXPANDED
+
+
+    }
+
+\end{quotation}
+
+
+
+\end{document}
