@@ -42,10 +42,10 @@ Record instances where
 
 
 \section{Data Structures}
-\begin{quotation}
+\begin{verbatim}
     struct RanInstruction{
         address: usize,
-        frametime: u32, // W\^X Assumption,
+        frametime: u32, // W^X Assumption,
         inputs: Vec<DataValue>,
         instruction: DataValue<Instruction>, // todo. 
     }
@@ -53,7 +53,7 @@ Record instances where
     enum DataPathNode{
         SYSCALL(name: String), // todo
         FILE(name:String, offset:usize),
-        RAN\_INSTRUCTION(v: RanInstruction),
+        RAN_INSTRUCTION(v: RanInstruction),
         UNEXPANDED,
     }
     enum DataValue<T> {
@@ -82,7 +82,7 @@ Record instances where
 
     }
 
-\end{quotation}
+\end{verbatim}
 
 
 
