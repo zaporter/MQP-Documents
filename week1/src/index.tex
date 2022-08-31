@@ -10,35 +10,98 @@
 
 
 \section{Checkpoint system for rr}
+\begin{verbatim}
+  /**
+   * Everything we know about the tracee state for a particular Mark.
+   * This data alone does not allow us to determine the time ordering
+   * of two Marks.
+   */
+  struct InternalMark {
+    InternalMark(ReplayTimeline* owner, ReplaySession& session,
+                 const MarkKey& key)
+        : owner(owner),
+          proto(key),
+          ticks_at_event_start(session.ticks_at_start_of_current_event()),
+          checkpoint_refcount(0),
+          singlestep_to_next_mark_no_signal(false) {
+      ReplayTask* t = session.current_task();
+      if (t) {
+        proto = ProtoMark(key, t);
+        extra_regs = t->extra_regs();
+      }
+    }
+    ~InternalMark();
+
+    bool operator<(const std::shared_ptr<InternalMark> other);
+
+    bool equal_states(ReplaySession& session) const;
+    void full_print(FILE* out) const;
+
+    ReplayTimeline* owner;
+    // Reuse ProtoMark to contain the MarkKey + Registers + ReturnAddressList.
+    ProtoMark proto;
+    ExtraRegisters extra_regs;
+    // Optional checkpoint for this Mark.
+    ReplaySession::shr_ptr checkpoint;
+    Ticks ticks_at_event_start;
+    // Number of users of `checkpoint`.
+    uint32_t checkpoint_refcount;
+    // The next InternalMark in the ReplayTimeline's Mark vector is the result
+    // of singlestepping from this mark *and* no signal is reported in the
+    // break_status when doing such a singlestep.
+    bool singlestep_to_next_mark_no_signal;
+  };
+\end{verbatim}
+\begin{verbatim}
+  /**
+   * Return a semantic copy of all the state managed by this,
+   * that is the entire tracee tree and the state it depends on.
+   * Any mutations of the returned Session can't affect the
+   * state of this, and vice versa.
+   *
+   * This operation is also called "checkpointing" the replay
+   * session.
+   *
+   * The returned clone is only partially initialized. This uses less
+   * system resources than a fully-initialized session, so if you're going
+   * to keep a session around inactive, keep the clone and not the original
+   * session. Partially initialized sessions automatically finish
+   * initializing when necessary.
+   */
+  shr_ptr ReplaySession::clone();
+\end{verbatim}
+
+See Session::copy\_state\_to
 
 \section{Project Assumptions}
 \begin{itemize}
-    \item W\^X circumvented with mprotect will guanratee that code section changes will not happen without an associated syscall. 
-        \subitem I am not sure if this applies with double mapped pages. 
     \item The frontend is a good proxy for what is running in the background. In other words, visual updates are given to the user quickly after code runs in the background (quickly is subjective but probably less than 1s) 
     \item It is not feasible to store every instruction (or even close to it). As such, it must be sufficient to scan and build paths intelligently
+    \item W\^X circumvented with mprotect will guanratee that code section changes will not happen without an associated syscall. 
+        \subitem I am not sure if this applies with double mapped pages. 
 \end{itemize}
 \section{Use cases / Scenario}
 \subsection{Date Gated Function}
 \subsubsection{Description}
-Functionality of a program only exists when f(current\_time)==true. 
+Part of an executable contains a check that ensures that certain code only runs when f(current\_time)==true. To start, f may be a simple operation such as x === 0 mod 10
 
-Examples of this may include malware or programs that have timing bugs. 
+You do not have access to the source and the binary has been compiled without debug symbols. You wish to understand exactly what the mechanism is that determines when the check passes and fails. 
 
-Use case would be to identify the check and either understand or manipulate it. 
+Examples of this may include malware or programs that have timing bugs. After you have identified the code in question, it may be possible to manipulate it with other outside tools. 
 
 
 \subsubsection{Required Functionality}
 \begin{enumerate}
     \item Replay the binary 
-    \item Figure out screen recordings.. xlib terrifies me
+    \item Figure out screen recordings.
     \item Trace back where the instruction for manipulating the instruction is stored
+    \item Identify similarity between multiple traces and highlight the divergence
 
 \end{enumerate}
 
 
-\subsection{Identify code injection opportunities}
-Record instances where 
+% \subsection{Identify code injection opportunities}
+% Record instances where 
 
 
 \section{Data Structures}
@@ -56,7 +119,7 @@ Record instances where
         RAN_INSTRUCTION(v: RanInstruction),
         UNEXPANDED,
     }
-    enum DataValue<T> {
+    struct DataValue<T> {
         value: T, 
         source: DataPathNode,
     }
@@ -70,11 +133,12 @@ Record instances where
             subtraces:Vec<Trace>,
         ),
         EXPANDED(
-
-        )
-        LOOP(
+            instructions:Vec<RanInstruction>
         )
         BRANCH(
+            // include the instruction they split off from and where they go
+            targets: Vec<(RanInstruction, Rc<Trace>)>,
+
 
         )
         UNEXPANDED
