@@ -2,11 +2,12 @@
 
 \section{Todos}
 \begin{itemize}
-    \item Understand checkpoint system for rr 
-    \item Demo of librr\_rs 
+    \item Understand checkpoint system for rr (discussed)
+    \item Demo of librr\_rs (undiscussed)
     \item Begin thinking about similartity metrics
     \item Outline usecase
 \end{itemize}
+
 
 
 \section{Checkpoint system for rr}
@@ -77,9 +78,13 @@ See Session::copy\_state\_to
 \begin{itemize}
     \item The frontend is a good proxy for what is running in the background. In other words, visual updates are given to the user quickly after code runs in the background (quickly is subjective but probably less than 1s) 
     \item It is not feasible to store every instruction (or even close to it). As such, it must be sufficient to scan and build paths intelligently
+    \item To detect differences, you must have both a positive and a negative of a branch. Never be able to detect regions of code that always execute the same way.
     \item W\^X circumvented with mprotect will guanratee that code section changes will not happen without an associated syscall. 
         \subitem I am not sure if this applies with double mapped pages. 
 \end{itemize}
+\subsection{Malware}
+\subsection{Detecting problems with closed source libraries}
+\subsection{Fuzz Tester}
 \section{Use cases / Scenario}
 \subsection{Date Gated Function}
 \subsubsection{Description}

@@ -1,0 +1,77 @@
+\maketitle
+
+\section{Todos}
+\begin{itemize}
+  \item 
+\begin{todolist}
+  \item[\done] Create detailed use case with goal of writing patch for closed souce driver
+  \item[\wontfix] Outline to identify an "interesting" action for the fuzzer
+  \item[\done] Fix reverse-continues in my library
+  \item Implement scan->breakpoint->continue loop to test feasibility
+\end{todolist}
+\end{itemize}
+
+\subsection{Requirements}
+\begin{itemize}
+  \item The program must be run from user-space
+  \item The user cannot debug code that is run on the other side of a interprocess socket
+  \item Any generated patch will not work across updates
+\end{itemize}
+
+\section{Adobe Acrobat Reader}
+\subsection{Target Software}
+Adobe Acrobat Reader for Linux. Last supported version was 9.5.5 released in May 2013. 
+\subsection{Reason}
+Since the last supported version there have been a large number of vulnerabilities in the software. None of these are patched in the Linux version
+\subsection{Particular CVEs}
+I've been looking at https://security.gentoo.org/glsa/200808-10 which is a RCE from an unprotected JavaScript method.
+\subsection{Difficulty}
+Hard
+\subsection{Detection}
+Unsure
+\subsection{Patch}
+Unsure 
+
+
+
+
+\section{Test Binary with Buffer Overflow}
+\subsection{Target Software}
+Vulnerable code that runs strncopy() or scanf() into a buffer of improper size causing a buffer overflow.
+\subsection{Reason}
+Lots of people make this mistake
+\subsection{Difficulty}
+Easier
+\subsection{Detection}
+Given a proper trace where a buffer overflow occurs, it should be possible to see as addresses and data on the stack gets overwritten and can be traced back to the input.  (describe in person)
+\subsection{Patch}
+Alter strncopy or scanf to only read an acceptable number of chracters
+
+\section{Intel C++ Compiler}
+\subsection{Target Software}
+Intel C++ Compiler 
+\subsection{Reason}
+The software contains a check for vendor string "Genuineintel" for the CPU where it spits out the optimal code. Otherwise it returns the slowest generated version of the code.
+\subsection{Difficulty}
+Medum
+\subsection{Detection}
+Check for comparisons with the string "Genuineintel"
+\subsection{Patch}
+Replace the output of those comparisons to ensure they always pass or fail
+
+\section{Instrumentation Example}
+\subsection{Target Software}
+Unspecified
+
+Talk in person
+
+\section{Ethics}
+Distributing a patched binary will never be acceptable, however, creating software to patch working but vulernable code is ethical as long as the original binary is not redistributed and the original creator is not harmed. 
+
+
+
+
+
+
+
+\end{document}
