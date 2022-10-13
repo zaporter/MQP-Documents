@@ -1,12 +1,12 @@
 \maketitle
 
-\section{Problem Statement}
+% \section{Problem Statement}
 
-It is currently difficult to identify the flow of "program-level"/macro logic from static or even dynamic analysis. 
+% It is currently difficult to identify the flow of "program-level"/macro logic from static or even dynamic analysis. 
 
-\section{Goal Statement}
+% \section{Goal Statement}
 
-I hope to use record and replay technology to allow researchers to move easily peer into a binary to find important addresses and to identify the most important instructions for "program-level" logic.
+% I hope to use record and replay technology to allow researchers to move easily peer into a binary to find important addresses and to identify the most important instructions for "program-level" logic.
 
 \section{Minimum A-Term Deliverables}
 
@@ -19,26 +19,64 @@ I hope to use record and replay technology to allow researchers to move easily p
 \item[\done] Recording infastructure to support scrubbing along the timeline of a program
 \item[\done] Tests for all code I have written (within reason)
 \item Documentation for all code that reasonably requires documentation 
+  \subitem Failure: Librr is lacking documentation in many places that absolutely require documentation
 \item An example use case to demonstrate value
+  \subitem Failure: I am still working on this
 \end{todolist}
 \end{itemize}
 
-\section{Revised use case}
-Capturing functions from other programs. 
+\section{Use Case: Profiling}
+Identify code that might work, but should not (use after free, memory leak, etc). 
+\\
+\\
+Problems: 
+\begin{itemize}
+  \item I am working with optmized assembly
+  \item It is impossible (very difficult) for me to determine the correct length of an array and if it is overflown
+  \item Other tools can likely do this better
+\end{itemize}
+\section{Use Case: Fuzzing / Exploit Discovery}
+Identify inputs that do not crash but follow a similar code flow. This would be useful once you have identified a vulnerable path through the binary but it crashes. 
+\\
+\\
+Problems: 
+\begin{itemize}
+  \item Other technologies can do this with far less overhead. 
+\end{itemize}
+\section{Use Case: Version Ignorant Patches}
+Create a format for doing binary patches that is dependent on \textit{program behavior} rather than binary layout. As such, in order to apply a patch, you first run through the program and then my program determines how to apply the patch to the binary. 
 
-$f(a*) \to b$
+This would allow for development of patches for version x to work on version x+1 with greater probability (not a certainty). This is useful if you want to apply a patch to something like your web browser which requires frequent but small updates. 
+\\
+\\
+Problems:
+\begin{itemize}
+  \item Defining the specifications for this type of patch may be difficult
+  \item Re-applying this patch may be quite fragile and it would require patch-tests
+\end{itemize}
 
-\subsection{Acrobat PDF Viewer}
-Suppose that you have a very complicated 
+\section{Use Case: Bypassing Simple Checks}
+Give the user tools to identify checks or instructions that the user does not wish to have run (Ex: ignore trial license expiration).
+\\
+\\
+Problems:
+\begin{itemize}
+  \item This is not a very noble persuit and won't impact much.
+\end{itemize}
 
-\subsection{Zoom Get Personal Meeting Room ID}
+\section{Use Case: Exposing GUI functionality as programmatic Functionality}
+Allow the user to define \textit{functions} that set memory addresses, run blocks of code, and then return values in other addresses. This can be used to create programmatic interfaces to things that otherwise are locked deep inside of an App. 
 
+Example for a function that accepts a users zoom username and password and returns their personal meeting room id
+\\ 
+\\
 How to use: 
+\begin{obeylines}
 Start zoom via MQPProj
 Signin using auth method (username, pw)
 Navigate to personal page
 Unhide your personal meeting room id. 
-Close.
+Close Zoom.
 
 Start MQPProj on recording that was just created. 
 Scrub start of timeline to before signin 
@@ -46,5 +84,37 @@ Scrub end of timeline to seeing your personal room ID.
 Indicate to MQPProj the function input (username, pw)
 Indicate to MQPProj the output of the function (personal meeting room id)
 Have it generate an executable for $f(username,pw) \to personal meeting room id$
+\end{obeylines}
+\quad 
+\\
+\\
+Problems:
+\begin{itemize}
+  \item This could be impossible 
+  \item Timing GUI events as well as internet events would break many assumptions of rr and require updates
+\end{itemize}
+
+\section{Use Case: Identifying Performance Regressions}
+Given two traces of different binary versions running the same code, identify matching blocks of instructions and then compare size and performance to report to the user. 
+\\
+\\
+Problems:
+\begin{itemize}
+  \item Exact performance timing information can be tricky in rr as it alters performance slightly (especially in programs that expect to be run on multiple cores).
+  \item This would be more of a tool to compare compiler versions rather than comparing program versions
+\end{itemize}
+
+
+\section{Use Case: Provide optimization hints back to the compiler}
+Many Java programs run as fast or faster than naive C or C++ or Rust programs due to optimizations allowed by runtime analysis. Create a framework that can analyze a trace in order to give hints to LLVM as to the best way to optimize the program.
+\\
+\\
+Problems:
+\begin{itemize}
+  \item I know very little about LLVM
+  \item This might fail
+\end{itemize}
+
+
 
 \end{document}
