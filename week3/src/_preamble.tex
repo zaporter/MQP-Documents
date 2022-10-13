@@ -1,0 +1,123 @@
+
+\documentclass[12pt,a4paper]{article}
+
+%\usepackage[colorlinks,allcolors=black,pdftex]{hyperref}
+
+\usepackage{wrapfig}
+\usepackage[dvipsnames]{xcolor}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{mathtools}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{bbold}
+\usepackage{mathrsfs}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usepackage{tikz-cd}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{tcolorbox}
+\usepackage{color}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+\usetikzlibrary{positioning}
+
+\newtheoremstyle{case}{}{}{}{}{}{:}{ }{}
+\theoremstyle{case}
+\newtheorem{case}{Case}
+
+\usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
+
+\newcommand{\todo}[1]{\textcolor{ForestGreen}{#1}}
+\newcommand{\correct}[1]{\textcolor{Red}{#1}}
+
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\R}{\mathbb{R}}
+%\newcommand{\C}{\mathbb{C}}
+\newcommand{\F}{\mathbb{F}}
+\newcommand{\A}{\mathbb{A}}
+\newcommand{\s}{\mathbb{S}}
+\newcommand{\p}{\mathbb{P}}
+\newcommand{\Sym}{\hbox{Sym}}
+\newcommand{\Gal}{\hbox{Gal}}
+\newcommand{\Hom}{\hbox{Hom}}
+\newcommand{\Mor}{\hbox{Mor}}
+\newcommand{\Mat}{\hbox{Mat}}
+\newcommand{\Aut}{\hbox{Aut}}
+\newcommand{\adj}{\hbox{adj}}
+\newcommand{\Ht}{\text{ht}}
+\newcommand{\Vect}{\mathbf{Vec}}
+\newcommand{\Diag}{\hbox{Diag}}
+\newcommand{\tr}{\hbox{tr}}
+\newcommand{\Tr}{\hbox{Tr}}
+\newcommand{\Span}{\hbox{span}}
+\newcommand{\Cent}{\hbox{Cent}}
+\newcommand{\GL}{\hbox{GL}}
+\newcommand{\id}{\hbox{id}}
+\newcommand{\Mon}{\hbox{Mon}}
+\newcommand{\Ext}{\hbox{Ext}}
+\newcommand{\Tor}{\hbox{Tor}}
+\newcommand{\Spec}{\hbox{Spec}}
+\newcommand{\scr}[1]{\mathscr{#1}}
+
+\newcommand{\cc}{\mathfrak{C}}
+
+\newtheorem{conjecture}{Conjecture}
+\newtheorem{definition}{Definition}
+\newtheorem*{definition*}{Definition}
+\newtheorem{remark}{Remark}
+\newtheorem{example}{Example}
+\newtheorem{lemma}{Lemma}
+\newtheorem{proposition}{Proposition}
+\newtheorem{corollary}{Corollary}
+\newtheorem{theorem}{Theorem}
+\newtheorem{exercise}{Exercise}
+
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+    }
+
+\lstset{frame=tb,
+  language=Matlab,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=none,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=3
+}
+% Checkmark system
+\usepackage{enumitem,amssymb}
+\newlist{todolist}{itemize}{2}
+\setlist[todolist]{label=$\square$}
+\usepackage{pifont}
+\newcommand{\cmark}{\ding{51}}%
+\newcommand{\xmark}{\ding{55}}%
+\newcommand{\done}{\rlap{$\square$}{\raisebox{2pt}{\large\hspace{1pt}\cmark}}%
+\hspace{-2.5pt}}
+\newcommand{\wontfix}{\rlap{$\square$}{\large\hspace{1pt}\xmark}}
+
+\author{Zachary Porter }
+\title{Week 3 Report}
+\date{2022-09-14}
+
+\begin{document}

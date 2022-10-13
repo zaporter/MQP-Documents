@@ -1,0 +1,50 @@
+\maketitle
+
+\section{Problem Statement}
+
+It is currently difficult to identify the flow of "program-level"/macro logic from static or even dynamic analysis. 
+
+\section{Goal Statement}
+
+I hope to use record and replay technology to allow researchers to move easily peer into a binary to find important addresses and to identify the most important instructions for "program-level" logic.
+
+\section{Minimum A-Term Deliverables}
+
+\begin{itemize}
+  \item 
+\begin{todolist}
+\item[\done] Code capable of tracing data through a program's execution 
+\item[\done] A plan for comparing the traces and identifying shared points between traces
+\item[\done] A platform for my UI that I am comfortable with
+\item[\done] Recording infastructure to support scrubbing along the timeline of a program
+\item[\done] Tests for all code I have written (within reason)
+\item Documentation for all code that reasonably requires documentation 
+\item An example use case to demonstrate value
+\end{todolist}
+\end{itemize}
+
+\section{Revised use case}
+Capturing functions from other programs. 
+
+$f(a*) \to b$
+
+\subsection{Acrobat PDF Viewer}
+Suppose that you have a very complicated 
+
+\subsection{Zoom Get Personal Meeting Room ID}
+
+How to use: 
+Start zoom via MQPProj
+Signin using auth method (username, pw)
+Navigate to personal page
+Unhide your personal meeting room id. 
+Close.
+
+Start MQPProj on recording that was just created. 
+Scrub start of timeline to before signin 
+Scrub end of timeline to seeing your personal room ID.
+Indicate to MQPProj the function input (username, pw)
+Indicate to MQPProj the output of the function (personal meeting room id)
+Have it generate an executable for $f(username,pw) \to personal meeting room id$
+
+\end{document}
