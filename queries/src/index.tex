@@ -1,0 +1,43 @@
+\maketitle
+
+\section{Selection Refining}
+
+Each section has a unique identifier (name)
+Section definition: Option<start,end> ($\cup$ selection..)* ($\cap$ selection...)*
+
+To refine a selection, you can give the engine hints:
+Select only code that satisfies the following properties:
+- It was run at least x times: [default: 1, min: 1]
+- It was not run more than x times: default:[infinity]
+- It is in x section 
+- It is not in {x} section
+-it happens on x thread 
+
+
+\section{Branches}
+In english: "Between time x and y, select all instructions that cause a different path of execution"
+Options:
+- Thread aware: default:true
+- Time ranges (two)
+What this really means:
+- If there is a branch, ensure that it is not just because of a thread swap
+- Dont show all the spots where they are different. Ignore the start and the end. 
+- 
+
+
+Between time x and y, show me the areas of memory that were touched and are the same vs different 
+sequential vs at start (parallel)
+
+Show me all instructions that modify different areas of memory between the two sections 
+
+
+In english: Give me a spot to instrument, instrument it.
+Make me angry
+
+
+\begin{itemize}
+  \item 
+Hello my name is zack
+    test
+\end{itemize}
+\end{document}
