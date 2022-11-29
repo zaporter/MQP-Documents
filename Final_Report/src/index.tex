@@ -158,19 +158,92 @@ $\omega$ & angular frequency & \si{\radian} \\
 
 %----------------------------------------------------------------------------------------
 
+
+\section{Executive Summary}
+
+\section{Introduction}
+Introduce glibc memory allocator
+
 \section{Background}
+most improtant is problem definition 
+define key tersma and ideas 
+
+\subsection{Current tools for source code understanding}
+
+\subsection{Need for progress in this domain}
 
 \subsection{Idea progression}
 
-\subsection{Librr-rs}
+\section{Methodology}
 
-\subsection{Program Understanding}
+\subsection{Librr-rs}
+\subsection{Query Framework}
+
+
+\subsection{Glibc memory allocator case study}
+
+
+\section{Druid}
 
 
 \section{Case study: glibc memory allocator}
 
-In order to  
+\section{Results}
+\subsection{}
+\section{Further work}
+\section{Conclusion}
 
+\section{Efficient Address Recording}
+
+\subsection{The problem}
+When I began my analysis of librr, I quickly noticed that singlestepping and continuing (interrupting the process) incurred a heavy performance penalty (~100-1000x pentalty depending on the workload). This is unacceptable for anything but the simplest of programs. As such, I decided to use code stomping to jump into an area that I control which can record addresses without having to interrupt the underlying process. 
+
+\subsection{My implementation}
+
+
+Added stomped code: 
+\begin{verbatim}
+{instructions that were stomped}
+XCHG rsp (beginning of my stack)
+PUSH (address of instruction that was skipped)
+XCHG rsp (beginning of my stack)
+\end{verbatim}
+
+Setting up the stack:
+I created two additional memory mapped regions. One is r-w which I call my stack, and the other is rxw which I call my trampoline segment. I then find instructions whose length is at least 5 bytes and then insert a near jump to the location in the trampoline segment. 
+
+\subsection{Stack layout}
+RSP xchange spot 
+RAX xchange spot 
+..
+end reserved space 
+..
+end of stack
+
+
+\subsection{Stack overflow protection}
+One problem that this implementation has is that it wastes stack space and is risky because if we overflow the stack then the user will get a segfault that is neigh-impossible to debug. As such, I also developed stack overflow protection to trigger an interrupt 
+
+Key pieces of information:
+\begin{itemize}
+    \item No code I write here can increment the x86 retired branch counter as otherwise there will be diversions from the recording. This means that I cannot just compare RSP with some value and then interrupt. 
+    \item The 0xcc instruction triggers an interrupt for a debugger (it is how gdb places software breakpoints).
+    \item The NOP (No-op) instruction is the same size (1 byte) 
+\end{itemize}
+
+\begin{verbatim}
+{instructions that were stomped}
+XCHG rsp (beginning of my stack)
+XCHG rax (beginning of my stack+4)
+PUSH (address of instruction that was skipped)
+PUSH 0xcccccccc
+POP 
+MOV AL (address at the base of the stack) 
+MOV (RIP+1) AL
+NOP
+XCHG rsp (beginning of my stack)
+XCHG rax (beginning of my stack+4)
+\end{verbatim}
 
 
 
