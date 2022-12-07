@@ -1,0 +1,25 @@
+\chapter{Frontend / Backend Architecture}
+We spent a significant amount of time designing the user interaction for our application. Initially, we planned to build a gdb plugin that would allow the user to view the state machine graph from the terminal and add annotations directly from the terminal. However, after attempting to write simple gdb plugins, we concluded that it was outside the scope of this project. Therefore, we chose to develop a more GUI-focused application that allows the user to interact with the graph.
+
+To create a responsive and interactive frontend for our application, we decided to split it into a HTTP server backend and a frontend architecture. This decision was not related to the eventual choice of a web-based interface, but rather to simplify the backend. This avoided the need for a message queuing or threadpool system, which would have been necessary in a single unified system to prevent the frontend from freezing whenever the user clicked anything.
+
+The separated networked architecture also enables us to support remote debugging without major ergonomic impacts. This is because the backend and frontend can communicate over the network, allowing us to debug and troubleshoot issues without being in the same physical location as the application.
+
+In addition, splitting the frontend and backend gave us more flexibility in designing the frontend. We were able to focus on creating a user-friendly and intuitive interface without worrying about the underlying logic and functionality of the application.
+
+However, this architecture also has some drawbacks. It increases the overall complexity and overhead of the project, as there are now two separate components that need to be maintained and developed. It also introduces more dependencies for the project, which can potentially cause issues. Overall, while the benefits of a separated architecture are significant, it is important to carefully consider the potential drawbacks before implementing it in a project.
+
+\section{Frontend Platform}
+As a Rust developer, I had always been on the lookout for native libraries that would allow me to create robust, efficient, and visually appealing front-end applications. When I stumbled upon Druid, it seemed like the perfect fit.
+
+Druid promised a react-like component-based approach to front-end development, making it easy to modularize and reuse code. Its API was intuitive and well-documented, and it had a growing community of users.
+
+However, as I started using Druid, I quickly realized that it was not as seamless as I had hoped. While the component-based approach was great for building simple, static interfaces, it lacked the ability to easily integrate with other libraries.
+
+For example, I wanted to use a syntax highlighter in my application, but Druid did not have any built-in support for it. I would have had to write my own syntax highlighter from scratch, which was not something I had the time or expertise to do.
+
+I also wanted to include a graph viewer in my application, but again, Druid did not have any built-in support for it. I ended up writing my own graph viewer, but the result was not pretty. It was clunky and difficult to use, and it didn't have the same level of polish as other graph viewers I had seen.
+
+I tried other Rust native libraries like iced and gtk, but they had similar limitations. They were great for building simple interfaces, but they lacked the flexibility and integration capabilities of React.
+
+In the end, I reluctantly fell back to using React for my front-end application. While it was not my ideal choice, it allowed me to quickly and easily integrate with other libraries, and it gave me the ability to create a more polished, user-friendly interface.

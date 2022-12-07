@@ -1,0 +1,106 @@
+\chapter{Efficient Address Recording}
+
+\section{The problem}
+To understand the flow of a program, we need to record the path that it takes. For statically compiled binaries, this is equivalent to recording the locations in memory where the CPU is executing instructions. One way to determine this path is to set "software breakpoints" at various addresses and then continue until the CPU hits one of these breakpoints.
+
+However, when we began our analysis of librr, we quickly noticed that singlestepping and continuing (interrupting the process) incurs a heavy performance penalty. Early measurements indicated overhead on the order of $100 \mu s$ per software breakpoint. This resulted in a ~100-1000x performance penalty depending on the workload. This is unacceptable for anything but the simplest of programs. As a result, we decided to use a more complicated technique called code stomping to force the underlying program to store its location in the program without using software breakpoints.
+
+\section{Naive Implementation}
+
+To have the program record its own location, we created two new memory regions: the address-segment and the trampoline-segment.
+
+The trampoline segment stores code that acts as a recorder for the addresses that are reached. The address-segment acts as the space that the code in the trampoline-segment can use to store the instrumented addresses. To instrument an address, we simply replace the instruction at that address with a jump to an entry in the trampoline-segment.
+
+The address-segment looks like the following:
+\subsection{Address-segment diagram}
+\begin{drawstack}
+  \startframe
+  % \cellcom writes something on the right-hand side of a cell.
+  \cell{RSP Storage} \cellcom{points to top of stack}
+  \cell{...}
+  \finishframe{Reserved (40 bytes)}
+  \startframe
+  \cell{...} \cellcom{}
+  \cell{Addr n} \cellcom{top of stack}
+  \cell{Addr n-1} \cellcom{}
+  \cell{Addr n-2} \cellcom{}
+  \cell{...} \cellcom{}
+  \cell{Addr 0} \cellcom{base of stack}
+  \finishframe{Recorded Addresses Stack}
+\end{drawstack}
+
+\subsection{Sample trampoline-segment entry}
+\begin{verbatim}
+{instruction that was stomped}
+XCHG rsp (beginning the address-segment)
+PUSH (address of instruction that was skipped)
+XCHG rsp (beginning of the address-segment)
+JMP (address to go to next instruction in the main program)
+\end{verbatim}
+
+\subsection{Considerations}
+\begin{enumerate}
+    \item This has no protection against overflowing the stack in the address-segment
+    \item You can only place trampolines on instructions that are 5+ bytes 
+    \item Yon can only place trampolines on instructions that do not alter program flow (for now)
+\end{enumerate}
+
+
+\section{Stack overflow protection}
+One problem with this implementation is that it wastes stack space and is risky because if the stack overflows, the user will get a segfault that is difficult to debug. Therefore, we also developed another implementation that includes stack overflow protection. This implementation uses a special byte that is overwritten whenever the stack grows into the reserved space, triggering a software breakpoint and an interrupt that allows the main program to reset the stack.
+
+\noindent Key pieces of information:
+\begin{itemize}
+    \item No code I write here can increment the x86 retired branch counter as otherwise there will be diversions from the recording. This means that I cannot just compare RSP with some value and then interrupt. 
+    \item The INT3 (0xcc) instruction triggers an interrupt that the CPU and kernel use to alert the debugger that a software breakpoint was reached.
+    \item The NOP (0x90) instruction is the same size as INT3 (1 byte) 
+\end{itemize}
+\subsection{Address-segment diagram}
+\begin{drawstack}
+  \startframe
+  % \cellcom writes something on the right-hand side of a cell.
+  \cell{RSP Storage} \cellcom{points to top of stack}
+  \cell{RAX Storage} \cellcom{}
+  \cell{...}
+    \cell{Overflow Detection Byte} \cellcom{intial: 0x90 (NOP)}
+    \finishframe{Reserved (40 bytes)}
+  \startframe
+  \cell{...} \cellcom{}
+    \cell{0xcccccccc} \cellcom{Canary to trip overflow byte}
+  \cell{Addr n} \cellcom{top of stack}
+  \cell{Addr n-1} \cellcom{}
+  \cell{Addr n-2} \cellcom{}
+  \cell{...} \cellcom{}
+  \cell{Addr 0} \cellcom{base of stack}
+  \finishframe{Recorded Addresses Stack}
+\end{drawstack}
+
+
+\subsection{Sample trampoline-segment entry}
+
+\begin{verbatim}
+{instruction that was stomped}
+XCHG rsp (beginning of the address-segment)
+XCHG rax (beginning of the address-segment + 8)
+PUSH (address of instruction that was skipped)
+PUSH 0xcccccccc
+POP  <- subtracts from RSP without clearing the memory in front of it 
+MOV AL (overflow detection byte) 
+MOV (RIP+1) AL
+NOP  <- instruction that will be overwritten by overflow detection byte
+XCHG rsp (beginning of the address-segment)
+XCHG rax (beginning of the address-segment + 8)
+JMP (address to go to next instruction in the main program)
+\end{verbatim}
+
+
+\subsection{Considerations}
+\begin{enumerate}
+    \item This requires the trampoline segments to have more than twice as many instructions
+    \item You can only place trampolines on instructions that are 5+ bytes 
+    \item Yon can only place trampolines on instructions that do not alter program flow (for now)
+\end{enumerate}
+\section{Final Implementation}
+After some experimentation, we determined that it was easiest to simply use the naive implementation and give the address-segment a large (256Mib) buffer. We then clear this stack every time a new "frametime" event triggers, which happens on average every $40,000,000$ instructions (TODO See librr/src/Scheduler.h:72).
+
+\section{Adding Breakpoints}
