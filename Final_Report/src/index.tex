@@ -1,251 +1,248 @@
-\frontmatter % Use roman page numbering style (i, ii, iii, iv...) for the pre-content pages
+%========================%
+% Beginning of Document  %
+%========================%
 
-\pagestyle{plain} % Default to the plain heading style until the thesis style is called for the body content
+\begin{document} 
 
-%----------------------------------------------------------------------------------------
-%	TITLE PAGE
-%----------------------------------------------------------------------------------------
+%========================%
+%     General Note       %
+%========================%
+%  Start new line: '\\'  %
+%  Start new paragraph:  %
+%         '\par'         %
+%========================%
 
-\begin{titlepage}
+%========================%
+%       Title Page       %
+%========================%
+
+\pagenumbering{gobble} % Disable page number on title page
 \begin{center}
-
-\vspace*{.06\textheight}
-{\scshape\LARGE \univname\par}\vspace{1.5cm} % University name
-\textsc{\Large Doctoral Thesis}\\[0.5cm] % Thesis type
-
-\HRule \\[0.4cm] % Horizontal line
-{\huge \bfseries \ttitle\par}\vspace{0.4cm} % Thesis title
-\HRule \\[1.5cm] % Horizontal line
- 
-\begin{minipage}[t]{0.4\textwidth}
-\begin{flushleft} \large
-\emph{Author:}\\
-\href{http://www.johnsmith.com}{\authorname} % Author name - remove the \href bracket to remove the link
-\end{flushleft}
-\end{minipage}
-\begin{minipage}[t]{0.4\textwidth}
-\begin{flushright} \large
-\emph{Supervisor:} \\
-\href{http://www.jamessmith.com}{\supname} % Supervisor name - remove the \href bracket to remove the link  
-\end{flushright}
-\end{minipage}\\[3cm]
- 
-\vfill
-
-\large \textit{A thesis submitted in fulfillment of the requirements\\ for the degree of \degreename}\\[0.3cm] % University requirement text
-\textit{in the}\\[0.4cm]
-\groupname\\\deptname\\[2cm] % Research group name and department name
- 
-\vfill
-
-{\large \today}\\[4cm] % Date
-%\includegraphics{Logo} % University/department logo - uncomment to place it
- 
-\vfill
+    \Huge{\textbf{Cosam: Codebase Onboarding and Analysis Machine}} \\ % Input title of MQP
+    \vspace{10mm} % Add vertical space between sections
+    \large{
+    A Major Qualifying Project (MQP) Report \\
+    Submitted to the Faculty of \\
+    WORCESTER POLYTECHNIC INSTITUTE \\
+    in partial fulfillment of the requirements \\
+    for the Degree of Bachelor of Science in \\
+    } % Do not edit this portion
+    \Large{
+    \vspace{5mm} % Add vertical space between sections
+    Computer Science \\ % Input first major
+    \vspace{10mm} % Add vertical space between sections
+    By: \\
+    \vspace{5mm} % Add vertical space between sections
+    Zachary Porter \\ % Input second author name
+    \vspace {15mm} % Add vertical space between sections
+    Project Advisors: \\ % Edit if only one advisor
+    \vspace{5mm} % Add vertical space between sections
+    Robert Walls \\ % Input name of first advisor
+    Gary Pollice \\  % Input name of second advisor
+    \vspace {15mm} % Add vertical space between sections
+    Date: 2022-12-16 \\ % Input date of project submission
+    }
+    \vspace{10mm} % Add vertical space between sections
+    \large{\textit{This report represents work of WPI undergraduate students submitted to the faculty as evidence of a degree requirement. WPI routinely publishes these reports on its website without editorial or peer review. For more information about the projects program at WPI, see \url{http://www.wpi.edu/Academics/Projects}.}} % Do not edit this portion
 \end{center}
-\end{titlepage}
 
+%========================%
+%   Delete unnecessary   %
+%  portions and adjust   %
+%   vertical spaces in   %
+%  lines 89-121 so that  %
+%   the text fills the   %
+%   entire title page    %
+%========================%
 
-%----------------------------------------------------------------------------------------
-%	ABSTRACT PAGE
-%----------------------------------------------------------------------------------------
+\newpage % Start new page
+\pagenumbering{roman} % Set page numbering to lower case Roman numerals (Use 'Roman' for capital Roman numerals)
+\setcounter{page}{1} % Set page number to 1
 
-\begin{abstract}
-\addchaptertocentry{\abstractname} % Add the abstract to the table of contents
-The Thesis Abstract is written here (and usually kept to just this page). The page is kept centered vertically so can expand into the blank space above the title too\ldots
-\end{abstract}
+\section*{Abstract} % Start the section 'Abstract'. Include the asterisks to keep section unnumbered and off of the table of contents
 
-%----------------------------------------------------------------------------------------
-%	ACKNOWLEDGEMENTS
-%----------------------------------------------------------------------------------------
+\noindent Type abstract here. % Use '\noindent' to remove indentation from the first paragraph of each section
+\par Second paragraph of abstract % Use '\par' to start a new paragraph
 
-\begin{acknowledgements}
-\addchaptertocentry{\acknowledgementname} % Add the acknowledgements to the table of contents
-The acknowledgments and the people to thank go here, don't forget to include your project advisor\ldots
-\end{acknowledgements}
+\newpage % Start new page
+\section*{Acknowledgements} % Start the section 'Acknowledgements'. Include the asterisks to keep section unnumbered and off of the table of contents
+I would like to express my heartfelt gratitude to my professors for their unwavering support and guidance throughout my MQP. I am particularly grateful to Professor Pollice for his invaluable feedback and creativity, and to Professor Walls for our deep and passionate discussions on malloc and gdb. I am also deeply thankful for my housemates and their support and to my family for my love and encouragement.
 
-%----------------------------------------------------------------------------------------
-%	LIST OF CONTENTS/FIGURES/TABLES PAGES
-%----------------------------------------------------------------------------------------
+I'm would never have started such an ambitious project without the support of everyone I have mentioned above, and for that I am eternally grateful. 
 
-\tableofcontents % Prints the main table of contents
 
-\listoffigures % Prints the list of figures
+\newpage % Start new page 
+\tableofcontents % Table of contents
+\listoftables % List of tables
+\listoffigures % List of figures
 
-\listoftables % Prints the list of tables
+\newpage % Start new page
+\begin{doublespacing} % Adjust spacing
+\pagenumbering{arabic} % Set page numbering to Arabic numbers
+\setcounter{page}{1} % Set page number to 1
+\include{introduction}
+\include{background}
+    \include{case_study}
+\include{efficient_address_recording}
 
-%----------------------------------------------------------------------------------------
-%	ABBREVIATIONS
-%----------------------------------------------------------------------------------------
+% Describe Synoptic
+\include{graph_simplification}
 
-\begin{abbreviations}{ll} % Include a list of abbreviations (a table of two columns)
+\include{frontend}
+\include{synoptic}
+    \include{conclusion}
 
-\textbf{LAH} & \textbf{L}ist \textbf{A}bbreviations \textbf{H}ere\\
-\textbf{WSF} & \textbf{W}hat (it) \textbf{S}tands \textbf{F}or\\
+% Describe 
+Key design decisions that were made: 
+- Use of rr
+- Efficent address recording
+- Seperate frontend / backend architecture
 
-\end{abbreviations}
 
-%----------------------------------------------------------------------------------------
-%	PHYSICAL CONSTANTS/OTHER DEFINITIONS
-%----------------------------------------------------------------------------------------
+Key powers of this tool:
 
-\begin{constants}{lr@{${}={}$}l} % The list of physical constants is a three column table
+Moving Forward:
 
-% The \SI{}{} command is provided by the siunitx package, see its documentation for instructions on how to use it
 
-Speed of Light & $c_{0}$ & \SI{2.99792458e8}{\meter\per\second} (exact)\\
-%Constant Name & $Symbol$ & $Constant Value$ with units\\
 
-\end{constants}
+Paper flow:
+Introduce the difficulties of program understanding and onboarding.
 
-%----------------------------------------------------------------------------------------
-%	SYMBOLS
-%----------------------------------------------------------------------------------------
+Background on current state of the art / tools used
 
-\begin{symbols}{lll} % Include a list of Symbols (a three column table)
+Introduce the current state of the art
 
-$a$ & distance & \si{\meter} \\
-$P$ & power & \si{\watt} (\si{\joule\per\second}) \\
-%Symbol & Name & Unit \\
+Starting up processes:
+- start a Binary Interface, go to the spot, then run the command to launch the gdbserver. <- cool.
+    - have the user type a command into their cmd prompt
 
-\addlinespace % Gap to separate the Roman symbols from the Greek
+Visualization techniques
 
-$\omega$ & angular frequency & \si{\radian} \\
 
-\end{symbols}
+%\subsection{Project Objectives} % Start the subsection 'Project Objectives', as a subsection of 'Introduction'
 
-%----------------------------------------------------------------------------------------
-%	DEDICATION
-%----------------------------------------------------------------------------------------
+%\noindent Give brief overview of project objectives
 
-\dedicatory{For/Dedicated to/To my\ldots} 
+%\subsubsection{Task 1} % Start the subsubsection 'Task 1', as a subsection of 'Project Objectives'
 
-%----------------------------------------------------------------------------------------
-%	THESIS CONTENT - CHAPTERS
-%----------------------------------------------------------------------------------------
+%\noindent Describe the first task. 
 
-\mainmatter % Begin numeric (1,2,3...) page numbering
+%\subsubsection{Task 2} % Start the subsubsection 'Task 2', as a subsection of 'Project Objectives'
 
-\pagestyle{thesis} % Return the page headers back to the "thesis" style
+%\noindent Describe the second task. 
 
-% Include the chapters of the thesis as separate files from the Chapters folder
-% Uncomment the lines as you write the chapters
+%\subsubsection{Task 3} % Start the subsubsection 'Task 3', as a subsection of 'Project Objectives'
 
-\include{Chapters/Chapter1}
-%\include{Chapters/Chapter2} 
-%\include{Chapters/Chapter3}
-%\include{Chapters/Chapter4} 
-%\include{Chapters/Chapter5} 
+%\noindent Describe the third task. 
 
-%----------------------------------------------------------------------------------------
-%	THESIS CONTENT - APPENDICES
-%----------------------------------------------------------------------------------------
+%\subsection{Background} % Start the subsection 'Background', as a subsection of 'Introduction'
 
-\appendix % Cue to tell LaTeX that the following "chapters" are Appendices
+%\noindent Give brief overview of project background
 
-% Include the appendices of the thesis as separate files from the Appendices folder
-% Uncomment the lines as you write the Appendices
+%\newpage % Start new page
+%\section{Section Title}
 
-\include{Appendices/AppendixA}
-%\include{Appendices/AppendixB}
-%\include{Appendices/AppendixC}
+%\noindent Begin new section
 
-%----------------------------------------------------------------------------------------
-%	BIBLIOGRAPHY
-%----------------------------------------------------------------------------------------
+%%========================%
+%%   Inputting a table    %
+%%========================%
 
-\printbibliography[heading=bibintoc]
+%\begin{table}[!tb] % Use '!' to override the LaTeX table placement, 't' to place the table at the top of the page, and 'b' to place the table at the bottom of the page if the top does not work
+%    \begin{center}
+%        \begin{tabular}{ |c|c|c| } 
+%            \hline
+%            cell1 & cell2 & cell3 \\ 
+%            cell4 & cell5 & cell6 \\ 
+%            cell7 & cell8 & cell9 \\ 
+%            \hline
+%        \end{tabular}
+%        \caption{Caption of table} % Automatically adds a table number which updates as more tables are added to the paper
+%        \label{table:label_of_table} % Used in the paper to reference the table and automatically includes the table number in the in-text reference.
+%    \end{center}
+%\end{table}
 
-%----------------------------------------------------------------------------------------
+%\par To reference a table, you would simply say Table \ref{table:label_of_table}. By using the table label, the reference updates automatically as the paper is edited and more tables are added.
 
+%% For more information, go to https://www.overleaf.com/learn/latex/tables
 
-\section{Executive Summary}
+%\section{Section Title}
 
-\section{Introduction}
-Introduce glibc memory allocator
+%\noindent Begin new section
 
-\section{Background}
-most improtant is problem definition 
-define key tersma and ideas 
+%%========================%
+%%   Inputting an image   %
+%%========================%
 
-\subsection{Current tools for source code understanding}
+%\par To add an image to the document, you first have to upload it to the file. To do so, click the "Upload" button on the top left of the screen (just below the "Menu" button, pictured in the figure below) and upload the image from your computer. 
 
-\subsection{Need for progress in this domain}
+%\begin{figure}[h] % Use 'h' to tell overleaf to place the image approximately 'here', meaning that you want it to be somewhere near where you are putting it in the text but will allow LaTeX to move it so that the overall format is best
+%    \centering
+%    % \includegraphics[width=0.5\textwidth]{Images/upload_image.JPG} % Set the image width relative to the with of the text on the page and input the name of the image that is being placed.
+%    \caption{Figure Caption} % Automatically adds a figure number which updates as more figures are added to the paper
+%    \label{fig:label_of_figure} % Used in the paper to reference the figure and automatically includes the figure number in the in-text reference.
+%\end{figure}
 
-\subsection{Idea progression}
+%\par To reference a figure, you would simply say Figure \ref{fig:label_of_figure}. By using the figure label, the reference updates automatically as the paper is edited and more figures are added.
 
-\section{Methodology}
+%% For more information, go to https://www.overleaf.com/learn/latex/Inserting_Images
 
-\subsection{Librr-rs}
-\subsection{Query Framework}
+%\section{Section Title}
 
+%\noindent Begin new section
 
-\subsection{Glibc memory allocator case study}
+%%========================%
+%% Inputting an equation  %
+%%========================%
 
+%% Use '\begin{equation}' to input a numbered equation. Used when equations will be reference in-text. Unlike tables, this equation will appear exactly where you put it in the text.
 
-\section{Druid}
+%\begin{equation} 
+%    y=mx+b
+%    \label{eq:equation_label}
+%\end{equation}
 
+%\par Once the equation is inputted, you can reference it similarly to tables using 'Equation \ref{eq:equation_label}'. Just like tables, the equation number update automatically when the paper is edited and new equations are added. 
 
-\section{Case study: glibc memory allocator}
+%\par If you want to include an equation that is not numbered, use the form $$\frac{-b\pm \sqrt{b^{2}-4ac}}{2a}$$ and the equation will appear exactly where you put it in the sentence, in it's own line. 
 
-\section{Results}
-\subsection{}
-\section{Further work}
-\section{Conclusion}
+%\par If you want to include an equation in a sentence without putting it in its own line, use the LaTeX 'math mode' using the form $x_{1}^{2}+x_{2}^{2}=r^{2}$. 
 
-\section{Efficient Address Recording}
+%% For more information and different methods, go to https://www.overleaf.com/learn/latex/mathematical_expressions
 
-\subsection{The problem}
-When I began my analysis of librr, I quickly noticed that singlestepping and continuing (interrupting the process) incurred a heavy performance penalty (~100-1000x pentalty depending on the workload). This is unacceptable for anything but the simplest of programs. As such, I decided to use code stomping to jump into an area that I control which can record addresses without having to interrupt the underlying process. 
+%\section{Conclusion}
 
-\subsection{My implementation}
+%\noindent Input your conclusion here. 
 
+%\par Notes: 
+%\begin{enumerate}
+%    \item The table of contents is set up with hyperlinks, and you can get to any section of the paper by clicking the section in the table of contents. Same for tables and figures. 
+%    \item You can input as many sources as you want into the .bib file. They will only appear in the 'References' section if they are cited in text. The 'References' section is organized in the order of which the sources are cited in text. The in text citations are also hyperlinked, and clicking one will bring you to that source in the 'References' section. 
+%    \item If you ever don't know how to do something, you can almost always find it on \url{https://www.overleaf.com/learn} or just by Googling. 
+%    \item The paper can be split into sections, subsections, and subsubsections, and subsubsubsections. These can be inputted in any part of the main body of the text, from the abstract to the conclusion. Adding an asterisks in the command line will prevent the section from getting a section number and appearing in the table of contents.
+%    \item Appendices are referenced the same as anything else, using Appendix \ref{appendix:appendix_a_label} and Appendix \ref{appendix:appendix_b_label}.
+%\end{enumerate}
 
-Added stomped code: 
-\begin{verbatim}
-{instructions that were stomped}
-XCHG rsp (beginning of my stack)
-PUSH (address of instruction that was skipped)
-XCHG rsp (beginning of my stack)
-\end{verbatim}
+\newpage % Start new page
+\begin{appendices}
 
-Setting up the stack:
-I created two additional memory mapped regions. One is r-w which I call my stack, and the other is rxw which I call my trampoline segment. I then find instructions whose length is at least 5 bytes and then insert a near jump to the location in the trampoline segment. 
+\section{Appendix A Title}
+\label{appendix:appendix_a_label}
 
-\subsection{Stack layout}
-RSP xchange spot 
-RAX xchange spot 
-..
-end reserved space 
-..
-end of stack
+Input materials for Appendix A. Works the same as regular text, just do not include captions or labels on any tables or figures. Appendices can be referenced in text the same way you reference figures or tables, using the label. 
 
+\newpage
 
-\subsection{Stack overflow protection}
-One problem that this implementation has is that it wastes stack space and is risky because if we overflow the stack then the user will get a segfault that is neigh-impossible to debug. As such, I also developed stack overflow protection to trigger an interrupt 
+\section{Appendix B Title}
+\label{appendix:appendix_b_label}
 
-Key pieces of information:
-\begin{itemize}
-    \item No code I write here can increment the x86 retired branch counter as otherwise there will be diversions from the recording. This means that I cannot just compare RSP with some value and then interrupt. 
-    \item The 0xcc instruction triggers an interrupt for a debugger (it is how gdb places software breakpoints).
-    \item The NOP (No-op) instruction is the same size (1 byte) 
-\end{itemize}
+Input materials for Appendix B
 
-\begin{verbatim}
-{instructions that were stomped}
-XCHG rsp (beginning of my stack)
-XCHG rax (beginning of my stack+4)
-PUSH (address of instruction that was skipped)
-PUSH 0xcccccccc
-POP 
-MOV AL (address at the base of the stack) 
-MOV (RIP+1) AL
-NOP
-XCHG rsp (beginning of my stack)
-XCHG rax (beginning of my stack+4)
-\end{verbatim}
+\end{appendices}
 
-
-
-
-% \end{document}  
+\newpage % Start new page
+\end{doublespacing} % Return to single spacing
+\addcontentsline{toc}{section}{References} % Add the 'References' section to the table of contents
+\bibliographystyle{ieeetr} % Set the bibliography style
+\bibliography{bibliography.bib} % Generate a bibliography from the .bib file with all of the references
+\end{document}

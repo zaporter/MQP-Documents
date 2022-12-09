@@ -31,13 +31,51 @@ sequential vs at start (parallel)
 Show me all instructions that modify different areas of memory between the two sections 
 
 
-In english: Give me a spot to instrument, instrument it.
-Make me angry
 
 
-\begin{itemize}
-  \item 
-Hello my name is zack
-    test
-\end{itemize}
+\begin{sequencediagram}
+        \newthread[white]{c}{:Frontend}
+        \newinst[4]{s}{:Backend}
+
+        \begin{call}
+            {c}{Get general information}
+            {s}{}
+        \end{call}
+        \stepcounter{seqlevel}
+        \begin{call}
+            {c}{Get recorded frames}
+            {s}{}
+        \end{call}
+        \stepcounter{seqlevel}
+        \begin{call}
+            {c}{Get source for (main)}
+            {s}{}
+        \end{call}
+        \stepcounter{seqlevel}
+        \begin{call}
+            {c}{Get current graph}
+            {s}{}
+        \end{call}
+        \begin{call}
+            {c}{Run }
+            {s}{}
+        \end{call}
+        \stepcounter{seqlevel}
+        \stepcounter{seqlevel}
+        \begin{call}
+            {c}{Get Recorded Frames}
+            {s}{}
+        \end{call}
+        \stepcounter{seqlevel}
+        \begin{call}
+            {c}{ws.connect}
+            {s}{ws.connectes}
+        \end{call}
+
+        \stepcounter{seqlevel}
+        \mess{c}{ws.message}{s}
+        \mess{s}{ws.message}{c}
+        \mess{c}{ws.message}{s}
+
+    \end{sequencediagram}
 \end{document}
