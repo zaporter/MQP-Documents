@@ -1,0 +1,16 @@
+\chapter{Understanding Code}
+Understanding code can be difficult, and blindly building a tool to improve the process is likely to get nowhere. As such, in order to learn how we can help build a tool, we conducted a case study wherein we spent a week studying and understanding a code base while recording our observations. The goal was to use only the codebase itself and no video-lectures or explanations that might not exist for all codebases (especially if they are proprietary). The codebase that we chose was the glibc memory allocator, commonly referred to by its most used function, malloc. The memory allocator uses a wide array of complicated datatypes, intricate macros, and C pointer tricks. The memory allocator also is extremely well documented with comments long expository comments. These comments act as a stand-in for a mentor at a company or someone who knows the codebase well.
+
+In order to tackle this problem, we first conducted a bit of research on tools in this area and were fairly dissapointed. Almost all resources we could find online reccomended the same advice: step through the code with a debugger, write some simple code that interacts with the library to explore its API, keep notes, and just read the source code (with tools provide features like jumping to definitions and collapsing modules). (TODO: src)
+
+\noindent After our study, we arrived at a the following conclusions:
+\begin{enumerate}
+    \item Malloc is more complicated than we had imagined.
+    \item Gdb is perfect for examining a single function execution in high detail, however it fails at helping the programmer easily understand how functions fit together. In order to understand how functions fit together, we set huge numbers of breakpoints and played around with the execution, jumping around and seeing where things took us. This was useful to understand the sections, however we noticed that we had a hard time dealing with the signal to noise ratio of gdb. 
+    \item The comments are extremely detailed and any changes that are made to malloc will require careful changes to the documentation that is scattered around the source code. We didn't find any instances of incorrect comments but can easily envision how documentation that is seperate from the implementation could become outdated
+    \item Writing everything down is painful and tedious however it was very helpful for our understanding as it allowed us to focus on the high level concepts while also explaining the low level implemenation.
+    \item Jumping around the source code with definitions and code collapsing was critical to keep the amount of information in our "working-memory" focused on understanding an individual task.
+\end{enumerate}
+
+\section{Solution}
+To address this, we created 

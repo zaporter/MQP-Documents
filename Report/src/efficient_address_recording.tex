@@ -103,4 +103,6 @@ JMP (address to go to next instruction in the main program)
 \section{Final Implementation}
 After some experimentation, we determined that it was easiest to simply use the naive implementation and give the address-segment a large (256Mib) buffer. We then clear this stack every time a new "frametime" event triggers, which happens on average every $40,000,000$ instructions (TODO See librr/src/Scheduler.h:72).
 
+TODO PUT A TABLE OF RESULTS HERE
+
 \section{Adding Breakpoints}

@@ -1,4 +1,4 @@
-\chapter{Frontend / Backend Architecture}
+\chapter{Design}
 We spent a significant amount of time designing the user interaction for our application. Initially, we planned to build a gdb plugin that would allow the user to view the state machine graph from the terminal and add annotations directly from the terminal. However, after attempting to write simple gdb plugins, we concluded that it was outside the scope of this project. Therefore, we chose to develop a more GUI-focused application that allows the user to interact with the graph.
 
 To create a responsive and interactive frontend for our application, we decided to split it into a HTTP server backend and a frontend architecture. This decision was not related to the eventual choice of a web-based interface, but rather to simplify the backend. This avoided the need for a message queuing or threadpool system, which would have been necessary in a single unified system to prevent the frontend from freezing whenever the user clicked anything.
