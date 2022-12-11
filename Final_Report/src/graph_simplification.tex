@@ -1,0 +1,48 @@
+\chapter{Graph Simplification}
+
+Once we began generating graphs, we immediately noticed that the graphs were neigh unusable for all but the simplest programs. Generally, these graphs were rendered as giant nests of events where each event had many edges in all different parts of the codebase. 
+
+\section{Synoptic}
+The first tool we used to simplify this was a FSM miner, synoptic. One problem that we ran into early on was that the naive way of displaying events was useless for all but the simplest traces. In this case, the naive way is to have one graph node for every event, and to have a edge between two nodes if and only if the target event directly follows the source event. The issue with this 
+
+
+
+
+\section{Modules}
+Another technique that was employed to great extent was the development of a module system for events. Modules can act as a namespace for each event. For example, consider two events that indicate the "entry" point of a function. One option is to name the first, func1\_entry and the second func2\_entry. However, this becomes tedious quickly and prohibits any intelligent grouping of events. As such, we create a module system using a similar syntax to many popular programming languages. 
+
+The syntax works by defining a module with a unique name and a single parent. Ex: malloc is a child of glibc, free is also a child of glibc. Then the entry point of free can be specified as free::entry and the entry point of malloc can be specified as malloc::entry. 
+
+This might look like the following in code:
+
+(TODO MAKE THIS A CODE BLOCK)
+\begin{verbatim}
+// The following metadata sets up the modules used in this example
+// [[{type:"module", name:"glibc"}]]
+// [[{type:"module", name:"malloc", parent:"glibc"}]]
+// [[{type:"module", name:"free", parent:"glibc"}]]
+
+uptr_t malloc(...){
+    // Define a start event that gets expanded into glibc::malloc::entry
+    // [[{type:"event", name:"malloc::entry"}]]
+    ...
+}
+uptr_t free(...){
+    // Define a start event that gets expanded into glibc::free::entry
+    // [[{type:"event", name:"free::entry"}]]
+    ...
+}
+\end{verbatim}
+
+TODO image of a graph created by module system
+
+It is best to keep the number of modules to a minimum as otherwise it can create some very ugly graphs, however with a few carefully placed modules, the graph can become much more understandable. You can also click on any module to expand/collapse all of the nodes within it. This can help the viewer start at a much higher level for complicated programs.
+
+
+
+\section{Grouping Strictly Sequential Nodes}
+The last major technique we used to simplify these graphs was the idea of grouping nodes that are strictly sequential. For this section, we say that nodes A,B are strictly sequential if and only if the only edge out of A is to B, and the only edge into B is from A. Similarly, (A,B,C) is strictly sequential if and only if A and B are strictly sequential, and B and C are also strictly sequential. One of the downfalls of using synoptic for graph simplification is that the final result has many more nodes than the number of edges. By grouping sets of strictly sequential edges, it becomes much easier to understand how nodes relate to each other because it forces graphviz to place multiple sequential steps closer together.
+
+
+TODO graph on / off
+

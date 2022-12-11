@@ -68,25 +68,24 @@ DW\_AT\_prototyped & Specifies whether the subprogram has a prototype \\ \hline
 By parsing out these DIE tags, debuggers can access valuable information about the symbols in a program, allowing them to provide useful features such as the ability to inspect and modify variables during execution.
 
 In the context of my live-debugger, Execumap, DWARF data plays a crucial role in my ability to create a state-diagram of the program's execution. By accessing and parsing DWARF data from the recorded trace, I am able to identify the symbols and their relationships in the program.
+
 \section{RR Record and Replay Framework}
-The rr record and replay framework is a powerful tool for debugging programs. It allows users to record a program's execution and then replay it at a later time. This allows users to easily and quickly reproduce the conditions that led to a bug, making it easier to find and fix the issue. This is particularly useful when debugging rare or timing-sensitive bugs like race conditions where gdb might prevent the bug from ever occuring in the first place.
+The rr record and replay framework is a powerful tool for debugging programs. It allows users to record a program's execution and then replay it at a later time. This allows users to easily and quickly reproduce the conditions that led to a bug. This is particularly useful when debugging rare or timing-sensitive bugs like race conditions where gdb might prevent the bug from ever occuring in the first place.
 
-One key aspect of rr is its focus on capturing nondeterministic input rather than the whole trace. By capturing and replaying these inputs, rr avoids having to walk through and instrument the vast majority of executed instructions. To accomplish this, rr overwrites the VDSO (virtual dynamic shared object) in the program being recorded. 
+One key aspect of rr is its focus on capturing nondeterministic input rather than the whole trace \cite{rr-site}. In this case, nondeterministic input are the events that could cause a program's output to vary from run to run. This includes things like syscalls, process-switching timings, or even some non-deterministic instructions. By capturing and replaying these inputs, rr avoids having to walk through and instrument the vast majority of executed instructions. To accomplish this, rr uses a wide variety of tools, including the `ptrace` interface to attach middleware, overwriting the the vDSO (virtual dynamic shared object), limiting a program to a single core, and other more specific techniques. 
 
-The VDSO, or virtual dynamic shared object, is a special object included in the Linux kernel. It provides a mechanism for user-space programs to access certain kernel functions without having to make a system call.
+To intercept many simple system calls, rr can simply overwrite the vDSO which is a use-space code-segement that the kernel exports for code "that does not necessarily have to run in kernel space" \cite{vdso} However some code directly calls syscalls. As such, "when the tracee makes a system call, RR is notified via a ptrace rap and it tries to rewrite the system-call instruction to call into [their] interception library" \cite[p.~8]{rr}. A diagram of this modification can be seen in figure 2.2. 
 
-When a program makes a system call, it typically does so by making a call to a function in the VDSO. This function then handles the system call on behalf of the program.
-
-By overwriting the VDSO, rr is able to replace the function that handles system calls with its own version. This allows rr to intercept the system call and capture the necessary information, such as the system call number and any arguments passed to it.
-
+(TODO)
 During the replay phase, rr uses this information to replay the system call, allowing the program to execute as if the original system call had been made. This allows rr to accurately reproduce the program's execution, including any system calls that were made. 
+(TODO)
 
 \begin{figure}
 \centering
 \begin{tikzpicture}
 
 %RR
-\node[rectangle, draw, minimum width=2cm, minimum height=1cm] (rr) at (6,0) {rr};
+\node[rectangle, draw, minimum width=2cm, minimum height=1cm] (rr) at (7,-2) {rr};
 
 %Kernel
 \node[rectangle, draw, minimum width=3cm, minimum height=1cm] (kernel) at (3,0) {Kernel};
@@ -95,35 +94,25 @@ During the replay phase, rr uses this information to replay the system call, all
 \node[rectangle, draw, minimum width=3cm, minimum height=1cm] (program) at (0,-2) {Program};
 
 %VDSO
-\node[rectangle, draw, minimum width=1.5cm, minimum height=1cm] (vdso) at (3,-2) {VDSO};
+\node[rectangle, draw, minimum width=1.5cm, minimum height=1cm] (syscall) at (3,-2) {Syscall};
 
 %Trace
-\node[rectangle, draw, minimum width=1.5cm, minimum height=1cm] (trace) at (5,-2) {Trace};
+\node[rectangle, draw, minimum width=1.5cm, minimum height=1cm] (trace) at (7,0) {Trace};
 
 %System Call
-\draw[->, >=stealth] (program) -- (vdso);
-\draw[->, >=stealth] (vdso) -- (kernel);
-\draw[->, >=stealth] (vdso) -- (rr);
-\draw[->, >=stealth] (rr) -- (trace);
+\draw[<->, >=stealth] (program) -- (syscall);
+\draw[<->, >=stealth, red, dashed] (syscall) -- (kernel);
+\draw[<->, >=stealth, red] (rr) -- (kernel);
+\draw[->, >=stealth, red] (syscall) -- (rr) node[midway,above ] {via ptrace};
+\draw[->, >=stealth, red] (rr) -- (trace);
 
 \end{tikzpicture}
-\caption{Diagram of relationships between the VDSO, rr, and the trace}
+\caption{Diagram showing how rr intercepts calls into the kernel and records them}
 \end{figure}
-% \begin{tikzpicture}
-
-% \node (rr) at (0,0) {rr};
-% \node (vdso) at (-2,-2) {vdso};
-% \node (kernel) at (0,-2) {Kernel};
-% \node (program) at (2,-2) {Program};
-% \node (trace) at (4,-2) {Trace};
-
-% \draw[->] (program) -- (vdso);
-% \draw[->] (vdso) -- (kernel);
-% \draw[->] (vdso) -- (rr);
-% \draw[->] (rr) -- (trace);
-In order to efficently "continue-backwards", rr utilizes a checkpointing system. The checkpointing system works by periodically saving the state of the program, including its registers and memory. This allows rr to quickly and easily restore the program to the state it was in at the time of the checkpoint during the replay phase. Then it can "continue-forwards" until it reaches the desired location.
+    In order to efficently "continue-backwards", rr utilizes a checkpointing system. The checkpointing system works by \begin{verbatim}fork\end{verbatim}ing the process to cheaply copy the address space \cite[p.~15]{rr}. This is efficient because "fork is (mostly) 'copy-on-write' and is very well optimized on Linux, so creating a checkpoint typically takes less than ten milliseconds." \cite[p.~15]{rr}. This allows rr to quickly and easily restore the program to the state it was in at the time of the checkpoint during the replay phase. Then it can "continue-forwards" until it reaches the desired location.
 
 The default interface to rr is a gdb server using the gdb messaging protocol. However, this is not a performant solution for a programmatic interface that might be doing queries across the entire execution of a program. As such, we developed librr, a Rust library to interact with the C++ internals and provide nice abstractions such as reading registers, writing bytes in memory, setting breakpoints, etc. 
 
 Execumap uses RR (and librr) extensively and would not be possible without them. The ability to gather more information about a programs execution after it happened is has been useful as I am not able to predict all of the locations that a user might want to visit. Similarly, without these tools I would be unable to allow the user to open up the trace to any location within the program's execution.
+
 
