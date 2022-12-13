@@ -1,1 +1,8 @@
-\chapter{Results Future Work}
+\chapter{Conclusions and Future Work}
+In this paper, we presented Explorant, a novel onboarding and code exploration tool. It utilizes a number of technical concepts to enable users to explore code without needing to re-run traces. Explorant helps developers gain a comprehensive understanding of a codebase through detailed analysis with gdb and high-level FSM analysis with the graph viewer. 
+
+While our target and case study has been malloc, in the end, we but were unable to make the diagrams as simple as we desired. Despite this, we were able to address many of the complaints we had about debugging without Explorant. In particular, Explorant enabled us to easily navigate large code segments, create usable diagrams, and quickly dive into the execution and setup of the program. 
+
+Given more time, we believe it would be beneficial to allow users to customize the graph further. This could include options to position nodes and add custom edges and labels. Additionally, restructuring the code to enable analysis on a subset of the whole execution would be helpful, especially for long-running setup-heavy programs. 
+
+We believe this tool has the potential to revolutionize programmer onboarding and we hope that other people will embrace and extend Explorant and its ideas.

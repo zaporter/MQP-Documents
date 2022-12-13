@@ -1,6 +1,5 @@
 \chapter{Efficient Address Recording}
 
-\section{The problem}
 To understand the flow of a program, we need to record the path that it takes. For statically compiled binaries, this is equivalent to recording the locations in memory where the CPU is executing instructions. One way to determine this path is to set "software breakpoints" at various addresses and then continue until the CPU hits one of these breakpoints.
 
 However, when we began our analysis of librr, we quickly noticed that singlestepping and continuing (interrupting the process) incurs a heavy performance penalty. Early measurements indicated overhead on the order of $100 \mu s$ per software breakpoint. This resulted in a ~100-1000x performance penalty depending on the workload. This is unacceptable for anything but the simplest of programs. As a result, we decided to use a more complicated technique called code stomping to force the underlying program to store its location in the program without using software breakpoints.
@@ -101,8 +100,6 @@ JMP (address to go to next instruction in the main program)
     \item Yon can only place trampolines on instructions that do not alter program flow (for now)
 \end{enumerate}
 \section{Final Implementation}
-After some experimentation, we determined that it was easiest to simply use the naive implementation and give the address-segment a large (256Mib) buffer. We then clear this stack every time a new "frametime" event triggers, which happens on average every $40,000,000$ instructions (TODO See librr/src/Scheduler.h:72).
+After some experimentation, we determined that it was easiest to simply use the naive implementation and give the address-segment a large (256Mib) buffer. We then clear this stack every time a new "frametime" event triggers, which happens on average every $40,000,000$ instructions \cite[Scheduler.h:72]{librr-src}. This allows us to process on the order of $10^9$ instructions per second (at peak thoretical throughput with no saving overhread). We have not conducted in depth numbers on this because this system has completelly eliminated the problem of address recording speed. 
 
-TODO PUT A TABLE OF RESULTS HERE
 
-\section{Adding Breakpoints}
