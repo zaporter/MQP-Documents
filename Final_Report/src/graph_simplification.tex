@@ -1,17 +1,13 @@
 \chapter{Graph Simplification}
-
-Once we began generating graphs, we immediately noticed that the graphs were neigh unusable for all but the simplest programs. Generally, these graphs were rendered as giant nests of events where each event had many edges in all different parts of the codebase. 
+Once we started generating graphs, we noticed that the graphs we generated were nearly unusable for all but the simplest programs. These graphs were rendered as giant nests of events, with each event having many edges in different parts of the codebase. To improve the clarity of the graphs, we implemented a FSM miner, a module system, and node-grouping techniques to simplify them.
 
 \section{Synoptic}
-The first tool we used to simplify this was a FSM miner, synoptic. One problem that we ran into early on was that the naive way of displaying events was useless for all but the simplest traces. In this case, the naive way is to have one graph node for every event, and to have a edge between two nodes if and only if the target event directly follows the source event. The issue with this 
+The first tool we used to simplify the graph was Synoptic, a finite state machine (FSM) miner. Developed by the University of Washington, Synoptic is described in their paper "Leveraging Existing Instrumentation to Automatically Infer Invariant-Constrained Models" \cite{synoptic}. Synoptic accepts a series of events that it uses to refine the graph. First, it creates a compact model where each node exists only once and is connected to all of the nodes that directly followed or preceeded it. Then Synoptic and then mines invariants from the graph. In this context, an invariant is a statement such as "x is always followed by y", "x always precedes y", or "x is never followed by y". By mining invariants, Synoptic is able to refine the graph and seperate nodes that are otherwise abiguous into multiple copies of the same node that represent different execution paths. This results in graphs with many more nodes but with each node follows a clear and unique execution path.
 
-
-
+(TODO image)
 
 \section{Modules}
-Another technique that was employed to great extent was the development of a module system for events. Modules can act as a namespace for each event. For example, consider two events that indicate the "entry" point of a function. One option is to name the first, func1\_entry and the second func2\_entry. However, this becomes tedious quickly and prohibits any intelligent grouping of events. As such, we create a module system using a similar syntax to many popular programming languages. 
-
-The syntax works by defining a module with a unique name and a single parent. Ex: malloc is a child of glibc, free is also a child of glibc. Then the entry point of free can be specified as free::entry and the entry point of malloc can be specified as malloc::entry. 
+Secondly, we employed a module system for events in order to achieve greater organization and simplicity. This system allows for the creation of namespaces, similar to popular programming languages. For example, instead of naming two "entry" points of functions as func1\_entry and func2\_entry, we can define a module with a unique name and a single parent, such as "malloc" being a child of "glibc". In this case, the entry point of "free" can be specified as "free::entry" and the entry point of "malloc" can be specified as "malloc::entry".
 
 This might look like the following in code:
 
@@ -23,12 +19,12 @@ This might look like the following in code:
 // [[{type:"module", name:"free", parent:"glibc"}]]
 
 uptr_t malloc(...){
-    // Define a start event that gets expanded into glibc::malloc::entry
+    // Define a start event that gets expanded into ::glibc::malloc::entry
     // [[{type:"event", name:"malloc::entry"}]]
     ...
 }
-uptr_t free(...){
-    // Define a start event that gets expanded into glibc::free::entry
+void free(...){
+    // Define a start event that gets expanded into ::glibc::free::entry
     // [[{type:"event", name:"free::entry"}]]
     ...
 }
@@ -36,13 +32,11 @@ uptr_t free(...){
 
 TODO image of a graph created by module system
 
-It is best to keep the number of modules to a minimum as otherwise it can create some very ugly graphs, however with a few carefully placed modules, the graph can become much more understandable. You can also click on any module to expand/collapse all of the nodes within it. This can help the viewer start at a much higher level for complicated programs.
-
+We recommend keeping the number of modules to a minimum in order to prevent complicated and difficult-to-understand graphs. Careful placement of a few modules, however, can make the graph much more legible. Additionally, modules allow for viewers to click on any module and expand or collapse the nodes within it, providing a high-level overview of complicated programs.
 
 
 \section{Grouping Strictly Sequential Nodes}
-The last major technique we used to simplify these graphs was the idea of grouping nodes that are strictly sequential. For this section, we say that nodes A,B are strictly sequential if and only if the only edge out of A is to B, and the only edge into B is from A. Similarly, (A,B,C) is strictly sequential if and only if A and B are strictly sequential, and B and C are also strictly sequential. One of the downfalls of using synoptic for graph simplification is that the final result has many more nodes than the number of edges. By grouping sets of strictly sequential edges, it becomes much easier to understand how nodes relate to each other because it forces graphviz to place multiple sequential steps closer together.
-
+Finally, we used the idea of grouping nodes that are strictly sequential to simplify the graphs in our project. We define strictly sequential nodes A and B as having the only edge out of A directed to B and the only edge into B coming from A. Similarly, a set of nodes (A,B,C) is strictly sequential if A and B are strictly sequential and B and C are also strictly sequential. This technique is particularly useful for Synoptic graph simplification because Synoptic produces a large number of nodes and this helps to constrain and visually separate the graph. These groups are automatically highlighted to the user with a dotted border. You can see an example of these groups below:
 
 TODO graph on / off
 
