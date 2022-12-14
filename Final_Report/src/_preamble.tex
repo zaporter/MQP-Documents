@@ -41,7 +41,8 @@
 
 \newcounter{subsubsubsection}[subsubsection]
 \renewcommand\thesubsubsubsection{\thesubsubsection.\arabic{subsubsubsection}}
-
+\titleformat{\chapter}{\huge\bfseries}{\thechapter}{10pt}{\huge}
+\titleclass{\chapter}{straight}
 \titleformat{\subsubsubsection}
   {\normalfont\normalsize\bfseries}{\thesubsubsubsection}{1em}{}
 \titlespacing*{\subsubsubsection}
