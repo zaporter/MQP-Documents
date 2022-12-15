@@ -1,4 +1,5 @@
 \chapter{Efficient Address Recording}
+\label{sec:effaddrrec}
 
 To understand the flow of a program, we need to record the path that it takes. For statically compiled binaries, this is equivalent to recording the locations in memory where the CPU is executing instructions. One way to determine this path is to set "software breakpoints" at various addresses and then continue until the CPU hits one of these breakpoints.
 
@@ -100,6 +101,6 @@ JMP (address to go to next instruction in the main program)
     \item Yon can only place trampolines on instructions that do not alter program flow (for now)
 \end{enumerate}
 \section{Final Implementation}
-After some experimentation, we determined that it was easiest to simply use the naive implementation and give the address-segment a large (256Mib) buffer. We then clear this stack every time a new "frametime" event triggers, which happens on average every $40,000,000$ instructions \cite[Scheduler.h:72]{librr-src}. This allows us to process on the order of $10^9$ instructions per second (at peak thoretical throughput with no saving overhread). We have not conducted in depth numbers on this because this system has completelly eliminated the problem of address recording speed. 
+After some experimentation, we determined that it was easiest to simply use the naive implementation and give the address-segment a large (256Mib) buffer. We then clear this stack every time a new "frametime" event triggers, which happens on average every $40,000,000$ instructions \cite[Scheduler.h:72]{librr-src}. This allows us to process on the order of $10^9$ instructions per second (at peak thoretical throughput with no saving overhread). We have not conducted in depth benchmarks on this because this system has completelly eliminated the problem of address recording speed. 
 
 

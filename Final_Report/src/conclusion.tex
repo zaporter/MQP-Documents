@@ -1,8 +1,13 @@
 \chapter{Conclusions and Future Work}
-In this paper, we presented Explorant, a novel onboarding and code exploration tool. It utilizes a number of technical concepts to enable users to explore code without needing to re-run traces. Explorant helps developers gain a comprehensive understanding of a codebase through detailed analysis with gdb and high-level FSM analysis with the graph viewer. 
+In this paper, we presented Explorant, a novel onboarding and code exploration tool. While we were not able to conduct an in depth analysis of how users would use our tool, we clearly see how this tool addresses many of the concerns with current methods while incorporating the other tools (like gdb and the source code) directly inside of Explorant. 
 
-While our target and case study has been malloc, in the end, we but were unable to make the diagrams as simple as we desired. Despite this, we were able to address many of the complaints we had about debugging without Explorant. In particular, Explorant enabled us to easily navigate large code segments, create usable diagrams, and quickly dive into the execution and setup of the program. 
+As time goes on, we hope that Explorant will continue to develop and address some of its main weaknesses. While many of the limitations addressed in the Limitations \ref{sec:design-limitations} section cannot be fixed (like JIT support), a number of them can. The areas that we think are most important for future work include:
+\begin{itemize}
+\item The ability to drag around nodes and add custom edges and labels within the graph so that the graphs can serve as documentation
+\item Fixing difficultiies with long running executions 
+\item Developing file-based segmentation techniques
+\item Possible automatic event definition based on some criteria from the trace that contain the fewest nodes but capture the most important flow paths. 
+\end{itemize}
 
-Given more time, we believe it would be beneficial to allow users to customize the graph further. This could include options to position nodes and add custom edges and labels. Additionally, restructuring the code to enable analysis on a subset of the whole execution would be helpful, especially for long-running setup-heavy programs. 
+We strongly believe that this tool could serve as a critical resource not only for the new developers understanding a codebase, but also for the senior engineers who can add Explorant annotations and have the junior engineers explore on their own. We hope that others will embrace and extend Explorant to realize the next generation of code exploration. 
 
-We believe this tool has the potential to revolutionize programmer onboarding and we hope that other people will embrace and extend Explorant and its ideas.

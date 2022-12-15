@@ -1,4 +1,6 @@
 \chapter{Background}
+In order to understand Explorant the details of how Explorant works, we have provided a bit of context on certain aspects of the stack that we consider to be particularly important.
+
 \section{Debugger internals}
 Debuggers are an essential tool for software developers, as they allow us to pause the execution of a program and inspect its state at any given moment. This is useful for detecting and fixing bugs, as well as for understanding how the program works. In this section, we will introduce some of the internals of debuggers, starting with the INT3 instruction.
 
@@ -63,6 +65,7 @@ DW\_AT\_decl\_line & The line on which the subprogram is declared \\ \hline
 DW\_AT\_prototyped & Specifies whether the subprogram has a prototype \\ \hline
 \end{tabular}
 \caption{A table of attributes for a DW\_TAG\_subprogram DIE.}
+    \label{fig:subprogram_die}
 \end{table}
 
 By parsing out these DIE tags, debuggers can access valuable information about the symbols in a program, allowing them to provide useful features such as the ability to inspect and modify variables during execution.
@@ -74,7 +77,7 @@ The rr record and replay framework is a powerful tool for debugging programs. It
 
 One key aspect of rr is its focus on capturing nondeterministic input rather than the whole trace \cite{rr-site}. In this case, nondeterministic input are the events that could cause a program's output to vary from run to run. This includes things like syscalls, process-switching timings, or even some non-deterministic instructions. By capturing and replaying these inputs, rr avoids having to walk through and instrument the vast majority of executed instructions. To accomplish this, rr uses a wide variety of tools, including the `ptrace` interface to attach middleware, overwriting the the vDSO (virtual dynamic shared object), limiting a program to a single core, and other more specific techniques. 
 
-To intercept many simple system calls, rr can simply overwrite the vDSO which is a use-space code-segement that the kernel exports for code "that does not necessarily have to run in kernel space" \cite{vdso} However some code directly calls syscalls. As such, "when the tracee makes a system call, RR is notified via a ptrace rap and it tries to rewrite the system-call instruction to call into [their] interception library" \cite[p.~8]{rr}. A diagram of this modification can be seen in figure 2.2. 
+To intercept many simple system calls, rr can simply overwrite the vDSO which is a use-space code-segement that the kernel exports for code "that does not necessarily have to run in kernel space" \cite{vdso} However some code directly calls syscalls. As such, "when the tracee makes a system call, RR is notified via a ptrace rap and it tries to rewrite the system-call instruction to call into [their] interception library" \cite[p.~8]{rr}. A diagram of this modification can be seen in figure \ref{fig:subprogram_die}. 
 
 (TODO)
 During the replay phase, rr uses this information to replay the system call, allowing the program to execute as if the original system call had been made. This allows rr to accurately reproduce the program's execution, including any system calls that were made. 
