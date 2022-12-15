@@ -1,7 +1,7 @@
 \chapter{Efficient Address Recording}
 \label{sec:effaddrrec}
 
-To understand the flow of a program, we need to record the path that it takes. For statically compiled binaries, this is equivalent to recording the locations in memory where the CPU is executing instructions. One way to determine this path is to set "software breakpoints" at various addresses and then continue until the CPU hits one of these breakpoints.
+To understand the flow of a program, we need to record the path that it takes. For statically compiled binaries, this is equivalent to recording the locations in memory where the CPU is executing instructions. One way to determine this path is to set "software breakpoints" at various addresses and then continue until the CPU hits one of these breakpoints (See section \ref{sec:debuggers}).
 
 However, when we began our analysis of librr, we quickly noticed that singlestepping and continuing (interrupting the process) incurs a heavy performance penalty. Early measurements indicated overhead on the order of $100 \mu s$ per software breakpoint. This resulted in a ~100-1000x performance penalty depending on the workload. This is unacceptable for anything but the simplest of programs. As a result, we decided to use a more complicated technique called code stomping to force the underlying program to store its location in the program without using software breakpoints.
 
@@ -13,6 +13,7 @@ The trampoline segment stores code that acts as a recorder for the addresses tha
 
 The address-segment looks like the following:
 \subsection{Address-segment diagram}
+\begin{figure}
 \begin{drawstack}
   \startframe
   % \cellcom writes something on the right-hand side of a cell.
@@ -28,7 +29,8 @@ The address-segment looks like the following:
   \cell{Addr 0} \cellcom{base of stack}
   \finishframe{Recorded Addresses Stack}
 \end{drawstack}
-
+  \caption{Naive efficient address recording stack layout}
+\end{figure}
 \subsection{Sample trampoline-segment entry}
 \begin{verbatim}
 {instruction that was stomped}
@@ -38,7 +40,7 @@ XCHG rsp (beginning of the address-segment)
 JMP (address to go to next instruction in the main program)
 \end{verbatim}
 
-\subsection{Considerations}
+\subsection{Limitations}
 \begin{enumerate}
     \item This has no protection against overflowing the stack in the address-segment
     \item You can only place trampolines on instructions that are 5+ bytes 
@@ -51,11 +53,13 @@ One problem with this implementation is that it wastes stack space and is risky 
 
 \noindent Key pieces of information:
 \begin{itemize}
-    \item No code I write here can increment the x86 retired branch counter as otherwise there will be diversions from the recording. This means that I cannot just compare RSP with some value and then interrupt. 
+    \item No instructions can increment the x86 retired branch counter as otherwise there will be diversions from the recording. This means that we cannot just compare RSP with some value and then interrupt. 
     \item The INT3 (0xcc) instruction triggers an interrupt that the CPU and kernel use to alert the debugger that a software breakpoint was reached.
     \item The NOP (0x90) instruction is the same size as INT3 (1 byte) 
 \end{itemize}
 \subsection{Address-segment diagram}
+
+\begin{figure}
 \begin{drawstack}
   \startframe
   % \cellcom writes something on the right-hand side of a cell.
@@ -74,6 +78,9 @@ One problem with this implementation is that it wastes stack space and is risky 
   \cell{Addr 0} \cellcom{base of stack}
   \finishframe{Recorded Addresses Stack}
 \end{drawstack}
+
+  \caption{Naive efficient address recording stack layout}
+\end{figure}
 
 
 \subsection{Sample trampoline-segment entry}
@@ -94,7 +101,7 @@ JMP (address to go to next instruction in the main program)
 \end{verbatim}
 
 
-\subsection{Considerations}
+\subsection{Limitations}
 \begin{enumerate}
     \item This requires the trampoline segments to have more than twice as many instructions
     \item You can only place trampolines on instructions that are 5+ bytes 

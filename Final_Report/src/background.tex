@@ -1,56 +1,65 @@
 \chapter{Background}
-In order to understand Explorant the details of how Explorant works, we have provided a bit of context on certain aspects of the stack that we consider to be particularly important.
+In order to understand Explorant the details of how Explorant works, we have provided a bit of context on certain aspects of the stack that we consider to be particularly important to understand why Explorant works as it does.
 
-\section{Debugger internals}
-Debuggers are an essential tool for software developers, as they allow us to pause the execution of a program and inspect its state at any given moment. This is useful for detecting and fixing bugs, as well as for understanding how the program works. In this section, we will introduce some of the internals of debuggers, starting with the INT3 instruction.
+\section{Debuggers and Breakpoints}
+\label{sec:debuggers}
+Debuggers are an essential tool for software developers, as they allow us to pause the execution of a program and inspect its state at any given moment. This is useful for detecting and fixing bugs, as well as for understanding how the program works. GDB \cite{gdb} is one of the most widely known debuggers for statically compiled languages (not interpreted languages like Javascript). GDB allows a developer to step around a program line by line to see the exact state of the program at any instance. A developer normally uses a tool like GDB when they know a little bit about how a program works but they are looking to solifify their knowledge and dive deeper. 
 
-The INT3 instruction, also known as the 0xcc byte, is used by debuggers to implement software breakpoints. When a debugger encounters this instruction in the program's code, it will pause the execution of the program and allow the user to inspect its state. This is useful for setting breakpoints at specific locations in the code, and for stepping through the program one instruction at a time.
+One of the most important things debuggers can do is set "software-breakpoints." These work by replacing the first byte of an instruction with 0xcc, also known as \texttt{INT3} \cite{int3}. When this instruction is executed, the cpu throws an \texttt{EXCEPTION\_BREAKPOINT} which calls the debugger'ss exception handler. This allows the debugger to fix the first byte of the instruction and modify the instruction pointer register to act as if the instruction had never been run. At this point, the debugger has full access to the programs memory and the developer can do things like examine memory addresses and data structures. Explorant utilizes this technique to allow the developer to open gdb at a specific instance in time. 
 
-Another important aspect of debugging is ASLR, or Address Space Layout Randomization. This is a security feature that randomizes the locations of certain parts of the program in memory, making it more difficult for attackers to exploit vulnerabilities. Debuggers must be able to decode the proc-maps file, which contains information about the locations of the various parts of the program, in order to properly interact with the program.
 
-GDB, a popular command line debugger, implements a variety of features to make debugging easier. One feature that I found particularly interesting was how it understands the current stack trace.
+\section{State Machines and Diagrams}
+\label{sec:fsm}
 
-GDB reads the stack trace by accessing the memory locations that store the stack frame pointers and function return addresses. The stack frame pointer is a register that points to the current stack frame, which contains the local variables and arguments for the current function. The function return address is the address of the next instruction to be executed when the current function returns.
+State diagrams are directed graphs that help programmers condense lots of complicated domain knowledge into a small number of states that a program can be in and how the states relate to each other \cite{state}. These diagrams are particularly useful for onboarding new developers, as they provide a high-level overview of the program's flow without requiring a deep understanding of the code \cite{onboarding-ramp, state}.
 
-By following the sequence of stack frame pointers and function return addresses, gdb can reconstruct the sequence of function calls that led to the current point in the program's execution. This information is then displayed to the user in the form of a stack trace, which shows the names and arguments of the functions that were called.
+Each node in a state diagram represents a unique state of the program and each edge represents an action that can occur to transition states. For example, in figure \ref{fig:state-chicken}, an \texttt{egg} state can be hatched to enter the \texttt{chick} state or cooked to enter the \texttt{omelet} state.
 
-There is a lot to say about debugger internals, but this should be enough information to understand the rest of this paper. 
-
-\section{State Diagrams}
-State diagrams, also known as finite state machines (FSM), are a useful tool in the realm of debugging. They provide a visual representation of the possible states of a program and the transitions between them.
-
-Each node in a state diagram represents a unique state of the program. These states can be thought of as the different possible ways that the program can behave. For example, in a simple program that takes user input, there may be a "waiting for user input" state and a "processing user input" state.
-
-Transitions between these states are represented by edges on the state diagram. These transitions are triggered by certain events or actions within the program. For example, in our simple program, the transition from the "waiting for user input" state to the "processing user input" state would be triggered by the user entering input.
-
-Flow control within the program can be easily visualized and understood through the use of state diagrams. For instance, in the case of a conditional statement, the state diagram would split into multiple branches depending on the outcome of the conditional.
-
-\begin{figure}
+\begin{figure}[!ht]
 \centering
-\begin{tikzpicture}[node distance=4.5 cm]
-\node[rectangle, draw] (A) {Idle};
-\node[rectangle, draw] (B) [right of=A] {Listening for user input};
-\node[rectangle, draw] (C) [below of=B] {Processing user input};
-\node[rectangle, draw] (D) [below of=C] {Generating response};
-\node[rectangle, draw] (E) [left of=C] {Sending response};
-\draw [->, =>stealth] (A) -- (B);
-\draw [->, =>stealth] (B) -- (C);
-\draw [->, =>stealth] (C) -- (D);
-\draw [->, =>stealth] (D) -- (E);
-\draw [->, =>stealth] (E) -- (A);
-\end{tikzpicture}
-\caption{Simple state diagram for a bot}
+\includegraphics[scale=0.5]{state-chicken}
+    \caption{Simple state diagram by by \cite{state}}
+    \label{fig:state-chicken}
 \end{figure}
 
-This state diagram provides a clear visual representation of a generic bot's behavior, allowing developers to easily understand how the program is executing and how it will respond to different inputs. State diagrams are particularly useful for onboarding new developers, as they provide a high-level overview of the program's flow without requiring a deep understanding of the code.
+Finite state machines (FSMs) are visually similar to state diagrams but they apply the node transitions with more rigor \cite[p~55]{fsm}. FSMs specify all of the conditions that lead to a transition and have no concept of global state. They are a very limited concept of computation. Explorant does not directly generate FSMs however it uses graph mining techniques to estimate what an FSM of a given program could look like (See section \ref{sec:synoptic}).
 
+
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[scale=0.3]{state}
+    \caption{Diagram of a simple FSM by \cite{fsm}}
+    \label{fig:fsm-labeled}
+\end{figure}
+
+% \begin{figure}
+% \centering
+% \begin{tikzpicture}[node distance=4.5 cm]
+% \node[rectangle, draw] (A) {Idle};
+% \node[rectangle, draw] (B) [right of=A] {Listening for user input};
+% \node[rectangle, draw] (C) [below of=B] {Processing user input};
+% \node[rectangle, draw] (D) [below of=C] {Generating response};
+% \node[rectangle, draw] (E) [left of=C] {Sending response};
+% \draw [->, =>stealth] (A) -- (B);
+% \draw [->, =>stealth] (B) -- (C);
+% \draw [->, =>stealth] (C) -- (D);
+% \draw [->, =>stealth] (D) -- (E);
+% \draw [->, =>stealth] (E) -- (A);
+% \end{tikzpicture}
+% \caption{Simple state diagram for a bot}
+%     \label{fsm:unlabeled}
+% \end{figure}
+
+
+\textit{Explorant does not use traditional state diagrams as we do not have the ability to intelligently label edges}. All of the state diagrams that Explorant can generate are unlabeled (this may change in the future). However, using techniques described in the graph simplification (\ref{sec:simplification}) section, we are still able to ensure that the graph is both understandable and usable. 
 
 \section{ELF / DWARF}
 The ELF (Executable and Linkable Format) is a file format used by many Unix-like operating systems to specify the layout of object files and executables. These files contain a wealth of information about the compiled code, including symbols, debugging information, and other metadata.
 
 One component of ELF files is DWARF (Debugging With Attributed Record Formats), which is a debugging data format that specifies the format of debugging information. DWARF data is embedded in ELF files and can be accessed by debuggers, such as gdb, to provide valuable information about the execution of a program.
 
-DWARF data is organized into structures called DIEs (Debugging Information Entries), which contain tags identifying the type of information they contain. Some common DIE tags include DW\_TAG\_variable for variables, DW\_TAG\_subprogram for functions, and DW\_TAG\_compile\_unit for compilation units. \\
+DWARF data is organized into structures called DIEs (Debugging Information Entries), which contain tags identifying the type of information they contain. Some common DIE tags include DW\_TAG\_variable for variables, DW\_TAG\_subprogram for functions, and DW\_TAG\_compile\_unit for compilation units. You can see table \ref{fig:subprogram_die} to see all of the information that goes into one of these DIE entries for a function.  
 
 \begin{table}
 \centering
@@ -68,20 +77,14 @@ DW\_AT\_prototyped & Specifies whether the subprogram has a prototype \\ \hline
     \label{fig:subprogram_die}
 \end{table}
 
-By parsing out these DIE tags, debuggers can access valuable information about the symbols in a program, allowing them to provide useful features such as the ability to inspect and modify variables during execution.
-
-In the context of my live-debugger, Execumap, DWARF data plays a crucial role in my ability to create a state-diagram of the program's execution. By accessing and parsing DWARF data from the recorded trace, I am able to identify the symbols and their relationships in the program.
+By parsing out these DIE tags, Explorant can access valuable information about the symbols in a program, allowing us to provide useful features such as the ability to correlate lines of code with addresses and figure out which function a particular line is part of. 
 
 \section{RR Record and Replay Framework}
-The rr record and replay framework is a powerful tool for debugging programs. It allows users to record a program's execution and then replay it at a later time. This allows users to easily and quickly reproduce the conditions that led to a bug. This is particularly useful when debugging rare or timing-sensitive bugs like race conditions where gdb might prevent the bug from ever occuring in the first place.
+The RR record and replay framework is a powerful tool for debugging programs that builds on top of GDB allow the user to go back in time during debugging \cite{rr-site}. This allows users to easily and quickly reproduce the conditions that led to a bug. This is particularly useful when debugging rare or timing-sensitive bugs like race conditions where GDB might prevent the bug from ever occuring in the first place.
 
-One key aspect of rr is its focus on capturing nondeterministic input rather than the whole trace \cite{rr-site}. In this case, nondeterministic input are the events that could cause a program's output to vary from run to run. This includes things like syscalls, process-switching timings, or even some non-deterministic instructions. By capturing and replaying these inputs, rr avoids having to walk through and instrument the vast majority of executed instructions. To accomplish this, rr uses a wide variety of tools, including the `ptrace` interface to attach middleware, overwriting the the vDSO (virtual dynamic shared object), limiting a program to a single core, and other more specific techniques. 
+One key aspect of RR is its focus on capturing nondeterministic input rather than the whole trace \cite{rr-site}. In this case, nondeterministic input are the events that could cause a program's output to vary from run to run. This includes things like syscall inputs and outputs, process-switching timings, or even some non-deterministic instructions. By capturing and replaying these inputs, RR avoids having to walk through and instrument the vast majority of executed instructions. RR uses a wide variety of tools including the `ptrace` interface to attach middleware, overwriting the the vDSO (virtual dynamic shared object), limiting a program to a single core, and other more specific techniques in order to accomplish record and replay. 
 
-To intercept many simple system calls, rr can simply overwrite the vDSO which is a use-space code-segement that the kernel exports for code "that does not necessarily have to run in kernel space" \cite{vdso} However some code directly calls syscalls. As such, "when the tracee makes a system call, RR is notified via a ptrace rap and it tries to rewrite the system-call instruction to call into [their] interception library" \cite[p.~8]{rr}. A diagram of this modification can be seen in figure \ref{fig:subprogram_die}. 
-
-(TODO)
-During the replay phase, rr uses this information to replay the system call, allowing the program to execute as if the original system call had been made. This allows rr to accurately reproduce the program's execution, including any system calls that were made. 
-(TODO)
+To intercept many simple system calls, RR can simply overwrite the vDSO which is a use-space code-segement that the kernel exports for code "that does not necessarily have to run in kernel space" \cite{vdso} However some code directly calls syscalls. As such, "when the tracee makes a system call, RR is notified via a ptrace trap and it tries to rewrite the system-call instruction to call into [their] interception library" \cite[p.~8]{rr}. A diagram of this modification can be seen in figure \ref{fig:subprogram_die}. A similar process happens during replay and all of the nondetermininstic calls are replaced with lookups to get the deterministic input from the recording.
 
 \begin{figure}
 \centering
@@ -110,12 +113,12 @@ During the replay phase, rr uses this information to replay the system call, all
 \draw[->, >=stealth, red] (rr) -- (trace);
 
 \end{tikzpicture}
-\caption{Diagram showing how rr intercepts calls into the kernel and records them}
+\caption{Diagram showing how RR intercepts calls into the kernel and records them}
 \end{figure}
-    In order to efficently "continue-backwards", rr utilizes a checkpointing system. The checkpointing system works by \begin{verbatim}fork\end{verbatim}ing the process to cheaply copy the address space \cite[p.~15]{rr}. This is efficient because "fork is (mostly) 'copy-on-write' and is very well optimized on Linux, so creating a checkpoint typically takes less than ten milliseconds." \cite[p.~15]{rr}. This allows rr to quickly and easily restore the program to the state it was in at the time of the checkpoint during the replay phase. Then it can "continue-forwards" until it reaches the desired location.
+    In order to efficently "continue-backwards", RR utilizes a checkpointing system. The checkpointing system works by \texttt{fork}ing the process to cheaply copy the address space \cite[p.~15]{rr}. This is efficient because "fork is (mostly) 'copy-on-write' and is very well optimized on Linux, so creating a checkpoint typically takes less than ten milliseconds." \cite[p.~15]{rr}. This allows RR to quickly and easily restore the program to the state it was in at the time of the checkpoint during the replay phase. Then it can "continue-forwards" until it reaches the desired location.
 
-The default interface to rr is a gdb server using the gdb messaging protocol. However, this is not a performant solution for a programmatic interface that might be doing queries across the entire execution of a program. As such, we developed librr, a Rust library to interact with the C++ internals and provide nice abstractions such as reading registers, writing bytes in memory, setting breakpoints, etc. 
+The default interface to RR is a gdb server using the gdb messaging protocol. However, this is not a performant solution for a programmatic interface that might be doing queries across the entire execution of a program. As such, we developed librr, a Rust library to interact with the C++ internals and provide nice abstractions such as reading registers, writing bytes in memory, setting breakpoints, etc. 
 
-Execumap uses RR (and librr) extensively and would not be possible without them. The ability to gather more information about a programs execution after it happened is has been useful as I am not able to predict all of the locations that a user might want to visit. Similarly, without these tools I would be unable to allow the user to open up the trace to any location within the program's execution.
+Explorant uses RR (and librr) extensively and would not be possible without them. All of the core infastructure for this program is based around using RR to efficiently replay a previously executed trace.  
 
 

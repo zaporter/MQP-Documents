@@ -1,13 +1,14 @@
 \chapter{Conclusions and Future Work}
 In this paper, we presented Explorant, a novel onboarding and code exploration tool. While we were not able to conduct an in depth analysis of how users would use our tool, we clearly see how this tool addresses many of the concerns with current methods while incorporating the other tools (like gdb and the source code) directly inside of Explorant. 
 
-As time goes on, we hope that Explorant will continue to develop and address some of its main weaknesses. While many of the limitations addressed in the Limitations \ref{sec:design-limitations} section cannot be fixed (like JIT support), a number of them can. The areas that we think are most important for future work include:
+As time goes on, we hope that Explorant will continue to develop and address some of its main weaknesses. While many of the limitations addressed in the Limitations \ref{sec:design-limitations} section cannot be fixed (like JIT support), a number of them can. The areas we think are ripe for future work are:
 \begin{itemize}
-\item The ability to drag around nodes and add custom edges and labels within the graph so that the graphs can serve as documentation
-\item Fixing difficultiies with long running executions 
-\item Developing file-based segmentation techniques
+\item The ability to drag around nodes and add custom edges and labels within the graph so that the graphs can serve as official documentation
+\item Fixing difficultiies with long running executions using complex function call heatmaps or simply limiting the execution to a smaller range (perhaps both) 
+\item The ability to compare multiple traces at once and build a combined graph from all of them.
+\item Automaic segmentation of events based off of filesystem hierarchies rather than modules. We think this would be particularly useful for codebases with a large number of disjoint files.
 \item Possible automatic event definition based on some criteria from the trace that contain the fewest nodes but capture the most important flow paths. 
 \end{itemize}
 
-We strongly believe that this tool could serve as a critical resource not only for the new developers understanding a codebase, but also for the senior engineers who can add Explorant annotations and have the junior engineers explore on their own. We hope that others will embrace and extend Explorant to realize the next generation of code exploration. 
+We strongly believe this tool can serve as a critical resource not only for new developers understanding a codebase, but also for senior engineers who can add Explorant annotations and have the junior engineers explore on their own. We will continue supporting Explorant and we hope others embrace and extend our work to realize the next generation of code exploration.
 

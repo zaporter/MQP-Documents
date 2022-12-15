@@ -81,28 +81,28 @@ I'm would never have started such an ambitious project without the support of ev
 \include{introduction}
 \include{background}
 \include{case_study}
-\include{frontend}
-\include{graph_simplification}
-\include{efficient_address_recording}
-
-% Describe Synoptic
-
+\include{design}
 \include{conclusion}
 
 \newpage % Start new page
 \begin{appendices}
 
-\section{Appendix A Title}
-\label{appendix:appendix_a_label}
+% \include{graph_simplification}
 
-Input materials for Appendix A. Works the same as regular text, just do not include captions or labels on any tables or figures. Appendices can be referenced in text the same way you reference figures or tables, using the label. 
+\chapter{Frontend Platform Decision}
+    \label{sec:frontend}
+As Rust developers, we originally designed and planned for a Rust-native gui library like Druid \cite{druid} however as time went by, we rapidly realized that unfortunately, the ecosystem is not ready yet. Many packages that we required for our project did not exist and we would have had to create them.
 
+We decided on a web-based frontend that communicates over standard POST requests. This had many unforseen benefits like the creation of a well-designed split between frontend and backend logic as well as creating an async-first architecture which is important for a responsive frontend that might be waiting on computations that take a long time in the backend (like re-running a trace). 
+
+The separated networked architecture also enables us to support remote debugging without major ergonomic impacts. This is because the backend and frontend can communicate over the network, allowing future users to debug and troubleshoot issues without being in the same physical location as the application.
+
+In addition, splitting the frontend and backend gave us more flexibility in designing the frontend. We were able to focus on creating a user-friendly and intuitive interface without worrying about the underlying logic and functionality of the application.
+
+However, this architecture also has some drawbacks. It significantly increased the overall complexity and overhead of the project by adding a new language to the language and a whole new build infastructure for that code. It also introduces more dependencies for the project, which can potentially cause issues. Overall, while the benefits of a separated architecture are significant, given the chance, we think it would still be better to rewrite to a native-first application later on. 
 \newpage
 
-\section{Appendix B Title}
-\label{appendix:appendix_b_label}
-
-Input materials for Appendix B
+\include{efficient_address_recording}
 
 \end{appendices}
 
