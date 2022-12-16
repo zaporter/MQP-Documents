@@ -1,0 +1,39 @@
+Prof robert walls and pollice
+
+Abstract is the goal actually to do that?
+
+Example for graph simplification techniqiques 
+
+Find not great. 
+
+Italics first time to introduce terms.
+
+
+"ramp-up" ie onboarding at the beginning
+
+
+s/paper/report/g 
+
+
+
+2.Background Bookending. Rephase sentence. Present tense. 
+
+2.3 Citation for ELF and DWARF
+
+
+
+Table 2.1
+
+Good looking tables dont have lines between entries. 
+Also left justify. 
+
+
+Citation for ptrace
+
+
+Move end paragraph of RR to beginning of section. 
+
+
+fix quotes across the entire paper. 
+
+

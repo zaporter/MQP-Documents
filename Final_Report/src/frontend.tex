@@ -1,0 +1,14 @@
+\chapter{Frontend}
+    \label{sec:frontend}
+
+We spent a significant amount of time designing the user interaction for our application. We considered multiple platforms such as a GDB or Ghidra\cite{ghidra-site} plugin or even just a terminal application. However, we eventually decided on a more GUI-focused application that would give us more creative freedom to address many of our design goals. This section details many of the decisions we made and the capabilities afforded by those decisions. 
+
+As Rust developers, we originally designed and planned for a Rust-native GUI library like Druid\cite{druid} however as time went by, we rapidly realized that unfortunately, the ecosystem is not ready yet. Many packages that we required for our project did not exist and we would have had to create them.
+
+As such, we decided on a web-based frontend that communicates over standard POST requests. This had many unforeseen benefits like the creation of a well-designed split between frontend and backend logic as well as creating an async-first architecture which is important for a responsive frontend that might be waiting on computations that take a long time in the backend (like re-running a trace). 
+
+The separated networked architecture also enables us to support remote debugging without major ergonomic impacts. This is because the backend and frontend can communicate over the network, allowing future users to debug and troubleshoot issues without being in the same physical location as the application.
+
+In addition, splitting the frontend and backend gave us more flexibility in designing the frontend. We were able to focus on creating a user-friendly and intuitive interface without worrying about the underlying logic and functionality of the application.
+
+However, this architecture also has some drawbacks. It significantly increased the overall complexity and overhead of the project by adding a new language to the project and a whole new build infrastructure for that code. It also introduces more dependencies for the project, which can potentially cause issues. Overall, while the benefits of a separated architecture are significant, given the chance, we think it would still be better to rewrite to a native-first application later on. 

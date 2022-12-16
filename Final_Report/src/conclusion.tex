@@ -1,11 +1,12 @@
 \chapter{Conclusions and Future Work}
-In this paper, we presented Explorant, a novel onboarding and code exploration tool. While we were not able to conduct an in depth analysis of how users would use our tool, we clearly see how this tool addresses many of the concerns with current methods while incorporating the other tools (like gdb and the source code) directly inside of Explorant. 
+In this report, we presented Explorant, a novel onboarding and code exploration tool. Explorant was designed to improve many of the issues that we encountered in our case study of \texttt{malloc} and we think that it has succeeded at its mission and more. 
 
-As time goes on, we hope that Explorant will continue to develop and address some of its main weaknesses. While many of the limitations addressed in the Limitations \ref{sec:design-limitations} section cannot be fixed (like JIT support), a number of them can. The areas we think are ripe for future work are:
+As time goes on, we hope that Explorant will continue to develop and address some of its main weaknesses. While many of the limitations brought up in section \ref{sec:design-limitations} cannot be fixed (like JIT support), a number of them can. The areas we think are ripe for future work are:
 \begin{itemize}
+    \item A user study evaluating the effectiveness of this tool and its usefulness
+\item The ability to compare multiple traces at once and build a combined graph from all of them.
 \item The ability to drag around nodes and add custom edges and labels within the graph so that the graphs can serve as official documentation
 \item Fixing difficultiies with long running executions using complex function call heatmaps or simply limiting the execution to a smaller range (perhaps both) 
-\item The ability to compare multiple traces at once and build a combined graph from all of them.
 \item Automaic segmentation of events based off of filesystem hierarchies rather than modules. We think this would be particularly useful for codebases with a large number of disjoint files.
 \item Possible automatic event definition based on some criteria from the trace that contain the fewest nodes but capture the most important flow paths. 
 \end{itemize}

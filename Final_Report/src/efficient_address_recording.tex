@@ -1,9 +1,9 @@
 \chapter{Efficient Address Recording}
 \label{sec:effaddrrec}
 
-To understand the flow of a program, we need to record the path that it takes. For statically compiled binaries, this is equivalent to recording the locations in memory where the CPU is executing instructions. One way to determine this path is to set "software breakpoints" at various addresses and then continue until the CPU hits one of these breakpoints (See section \ref{sec:debuggers}).
+To understand the flow of a program, we need to record the path that it takes. For statically compiled binaries, this is equivalent to recording the locations in memory where the CPU is executing instructions. One way to determine this path is to set software breakpoints at various addresses and then continue until the CPU hits one of these breakpoints (See section \ref{sec:debuggers}).
 
-However, when we began our analysis of librr, we quickly noticed that singlestepping and continuing (interrupting the process) incurs a heavy performance penalty. Early measurements indicated overhead on the order of $100 \mu s$ per software breakpoint. This resulted in a ~100-1000x performance penalty depending on the workload. This is unacceptable for anything but the simplest of programs. As a result, we decided to use a more complicated technique called code stomping to force the underlying program to store its location in the program without using software breakpoints.
+However, when we began our analysis of librr, we quickly noticed that singlestepping and continuing (interrupting the process) incurs a heavy performance penalty. Early measurements indicated overhead on the order of $25-100 \mu s$ per software breakpoint. This resulted in a 100-1000x performance penalty depending on the workload. This is unacceptable for anything but the simplest of programs. As a result, we decided to use a more complicated technique called code stomping to force the underlying program to store its location in the program without using software breakpoints.
 
 \section{Naive Implementation}
 
@@ -57,8 +57,9 @@ One problem with this implementation is that it wastes stack space and is risky 
     \item The INT3 (0xcc) instruction triggers an interrupt that the CPU and kernel use to alert the debugger that a software breakpoint was reached.
     \item The NOP (0x90) instruction is the same size as INT3 (1 byte) 
 \end{itemize}
-\subsection{Address-segment diagram}
 
+\subsection{Address-segment diagram}
+\break
 \begin{figure}
 \begin{drawstack}
   \startframe
@@ -108,6 +109,5 @@ JMP (address to go to next instruction in the main program)
     \item Yon can only place trampolines on instructions that do not alter program flow (for now)
 \end{enumerate}
 \section{Final Implementation}
-After some experimentation, we determined that it was easiest to simply use the naive implementation and give the address-segment a large (256Mib) buffer. We then clear this stack every time a new "frametime" event triggers, which happens on average every $40,000,000$ instructions \cite[Scheduler.h:72]{librr-src}. This allows us to process on the order of $10^9$ instructions per second (at peak thoretical throughput with no saving overhread). We have not conducted in depth benchmarks on this because this system has completelly eliminated the problem of address recording speed. 
-
+After some experimentation, we determined that it was easiest to simply use the naive implementation and give the address-segment a large (256Mib) buffer. We then clear this stack every time a new "frametime" event triggers, which happens on average every $40,000,000$ instructions \cite[Scheduler.h:72]{librr-src}. This allows us to process on the order of $10^9$ instructions per second (at peak theoretical throughput with no saving overhead). We have not conducted in-depth benchmarks on this because this system has completely eliminated the problem of address recording speed. 
 
